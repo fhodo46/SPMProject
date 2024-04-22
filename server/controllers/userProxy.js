@@ -36,15 +36,31 @@ function editUser(userId, newInfo) {
   return response;
 }
 
-function changePassword(userId, password) {
+async function changePassword(userId, newPassword, oldPassword) {
+  const user = await User.findById(userId);
   const response = { result: true, message: "Edited successfully!" };
-  User.findOneAndUpdate({ _id: userId }, { password }, (err) => {
-    if (err) {
+  if (user) {
+    if (oldPassword === user.password) {
+      if (newPassword !== oldPassword) {
+        User.findOneAndUpdate({ _id: userId }, { newPassword }, (err) => {
+          if (err) {
+            response["result"] = false;
+            response["message"] = "Unable to update due to an error!";
+          }
+        });
+        return response;
+      } else {
+        response["result"] = false;
+        response["message"] = "New password same with old password";
+      }
+    } else {
       response["result"] = false;
-      response["message"] = "Unable to edit due to an error!";
+      response["message"] = "Wrong password entered";
     }
-  });
-  return response;
+  } else {
+    response["result"] = false;
+    response["message"] = "User does not exist!";
+  }
 }
 
 module.exports = { logIn, logOut, deleteUser, editUser, changePassword };
