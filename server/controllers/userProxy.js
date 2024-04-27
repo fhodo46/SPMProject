@@ -1,4 +1,21 @@
-const User = require("./models./user");
+const User = require("../models/user");
+
+async function createUser(req, res) {
+  try {
+    const { username, Password, status, firstName, lastName } = req.body;
+    const newUser = new User({
+      username,
+      Password,
+      status,
+      firstName,
+      lastName,
+    });
+    await newUser.save();
+    res.status(201).json(newUser);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+}
 
 async function logIn(username, password) {
   const user = await getUserByUsername(username);
@@ -63,4 +80,11 @@ async function changePassword(userId, newPassword, oldPassword) {
   }
 }
 
-module.exports = { logIn, logOut, deleteUser, editUser, changePassword };
+module.exports = {
+  logIn,
+  logOut,
+  deleteUser,
+  editUser,
+  changePassword,
+  createUser,
+};
