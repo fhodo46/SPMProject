@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const filterRenewalSchema = new Schema({
@@ -8,4 +8,4 @@ const filterRenewalSchema = new Schema({
 
 const FilterRenewal = mongoose.model("FilterRenewal", filterRenewalSchema);
 
-export default FilterRenewal;
+module.exports = FilterRenewal;

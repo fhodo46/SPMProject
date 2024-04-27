@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const redListSchema = new Schema({
@@ -12,4 +12,4 @@ const redListSchema = new Schema({
 
 const RedList = mongoose.model("RedList", redListSchema);
 
-export default RedList;
+module.exports = RedList;

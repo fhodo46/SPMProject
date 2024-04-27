@@ -1,5 +1,4 @@
-import mongoose from "mongoose";
-import InventoryItem from "./InventoryItem";
+const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const inventoryRequestSchema = new Schema({
@@ -7,6 +6,9 @@ const inventoryRequestSchema = new Schema({
   technicianId: { type: Number, required: true },
 });
 
-const InventoryRequest = mongoose.model("InventoryRequest", inventoryRequestSchema);
+const InventoryRequest = mongoose.model(
+  "InventoryRequest",
+  inventoryRequestSchema
+);
 
-export default InventoryRequest;
+module.exports = InventoryRequest;

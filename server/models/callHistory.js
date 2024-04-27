@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const callHistorySchema = new Schema({
@@ -11,4 +11,4 @@ const callHistorySchema = new Schema({
 
 const CallHistory = mongoose.model("CallHistory", callHistorySchema);
 
-export default CallHistory;
+module.exports = CallHistory;

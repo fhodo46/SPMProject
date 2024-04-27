@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const reservedCallSchema = new Schema({
@@ -12,4 +12,4 @@ const reservedCallSchema = new Schema({
 
 const ReservedCall = mongoose.model("ReservedCall", reservedCallSchema);
 
-export default ReservedCall;
+module.exports = ReservedCall;

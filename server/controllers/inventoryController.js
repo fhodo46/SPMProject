@@ -1,4 +1,4 @@
-import InventoryItem from "../models/InventoryItem";
+const InventoryItem = require("../models/InventoryItem");
 
 const createInventoryItem = async (req, res) => {
   try {

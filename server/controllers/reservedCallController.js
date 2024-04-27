@@ -1,9 +1,10 @@
-import ReservedCall from '../server/models/reservedCalls';
+const ReservedCall = require("../server/models/reservedCalls");
 
 //create a new reserved call
 const createReservedCall = async (req, res) => {
   try {
-    const { agentId, outcome, date, referenceId, comments, reservationDate } = req.body;
+    const { agentId, outcome, date, referenceId, comments, reservationDate } =
+      req.body;
     const newReservedCall = new ReservedCall({
       agentId,
       outcome,
@@ -25,7 +26,7 @@ const getReservedCall = async (req, res) => {
     const reservedCallId = req.params.reservedCallId;
     const reservedCall = await ReservedCall.findById(reservedCallId);
     if (!reservedCall) {
-      return res.status(404).json({ error: 'Reserved call not found' });
+      return res.status(404).json({ error: "Reserved call not found" });
     }
     res.status(200).json(reservedCall);
   } catch (err) {
@@ -44,7 +45,7 @@ const updateReservedCallOutcome = async (req, res) => {
       { new: true }
     );
     if (!updatedReservedCall) {
-      return res.status(404).json({ error: 'Reserved call not found' });
+      return res.status(404).json({ error: "Reserved call not found" });
     }
     res.status(200).json(updatedReservedCall);
   } catch (err) {
@@ -63,7 +64,7 @@ const updateReservedCallAgent = async (req, res) => {
       { new: true }
     );
     if (!updatedReservedCall) {
-      return res.status(404).json({ error: 'Reserved call not found' });
+      return res.status(404).json({ error: "Reserved call not found" });
     }
     res.status(200).json(updatedReservedCall);
   } catch (err) {
@@ -82,7 +83,7 @@ const updateReservedCallDate = async (req, res) => {
       { new: true }
     );
     if (!updatedReservedCall) {
-      return res.status(404).json({ error: 'Reserved call not found' });
+      return res.status(404).json({ error: "Reserved call not found" });
     }
     res.status(200).json(updatedReservedCall);
   } catch (err) {
@@ -101,7 +102,7 @@ const updateReservedCallComments = async (req, res) => {
       { new: true }
     );
     if (!updatedReservedCall) {
-      return res.status(404).json({ error: 'Reserved call not found' });
+      return res.status(404).json({ error: "Reserved call not found" });
     }
     res.status(200).json(updatedReservedCall);
   } catch (err) {
@@ -120,7 +121,7 @@ const updateReservedCallReservationDate = async (req, res) => {
       { new: true }
     );
     if (!updatedReservedCall) {
-      return res.status(404).json({ error: 'Reserved call not found' });
+      return res.status(404).json({ error: "Reserved call not found" });
     }
     res.status(200).json(updatedReservedCall);
   } catch (err) {
@@ -132,11 +133,13 @@ const updateReservedCallReservationDate = async (req, res) => {
 const deleteReservedCall = async (req, res) => {
   try {
     const reservedCallId = req.params.reservedCallId;
-    const deletedReservedCall = await ReservedCall.findByIdAndDelete(reservedCallId);
+    const deletedReservedCall = await ReservedCall.findByIdAndDelete(
+      reservedCallId
+    );
     if (!deletedReservedCall) {
-      return res.status(404).json({ error: 'Reserved call not found' });
+      return res.status(404).json({ error: "Reserved call not found" });
     }
-    res.status(200).json({ message: 'Reserved call deleted successfully' });
+    res.status(200).json({ message: "Reserved call deleted successfully" });
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
@@ -185,7 +188,7 @@ const addComment = async (req, res) => {
       { new: true }
     );
     if (!updatedReservedCall) {
-      return res.status(404).json({ error: 'Reserved call not found' });
+      return res.status(404).json({ error: "Reserved call not found" });
     }
     res.status(200).json(updatedReservedCall);
   } catch (err) {
