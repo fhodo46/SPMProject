@@ -7,7 +7,7 @@ const cors = require("cors");
 const { connectToDb } = require("./database/db");
 const logInRouter = require("../server/routers/loginRouter");
 const signUpRouter = require("../server/routers/signUpRouter");
-
+const authorization = require("../server/routers/authorization");
 const allowedOrigins = ["https://localhost:3000", "postman://app"];
 
 app.use(
@@ -25,7 +25,8 @@ app.use(
   })
 );
 
-app.use("/", logInRouter);
+app.use("/logIn", logInRouter);
+app.use("/permission", authorization);
 app.use("/signUp", signUpRouter);
 
 const options = {
