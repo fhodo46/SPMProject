@@ -1,11 +1,14 @@
+require("dotenv").config();
 const express = require("express");
 const app = express();
 const https = require("https");
 const fs = require("fs");
 const cors = require("cors");
 const { connectToDb } = require("./database/db");
+const logInRouter = require("../server/routers/loginRouter");
+const signUpRouter = require("../server/routers/signUpRouter");
 
-const allowedOrigins = ["https://localhost:3000"];
+const allowedOrigins = ["https://localhost:3000", "postman://app"];
 
 app.use(
   cors({
@@ -21,6 +24,9 @@ app.use(
     optionsSuccessStatus: 204,
   })
 );
+
+app.use("/", logInRouter);
+app.use("/signUp", signUpRouter);
 
 const options = {
   key: fs.readFileSync("./localhost.key"),
