@@ -1,7 +1,7 @@
-import Reference from '../server/models/reference';
+const Reference = require("../models/reference");
 
 //add reference (backend)
-const addReference2 = async (Reference) =>{
+const addReference2 = async (Reference) => {
   try {
     const {
       firstName,
@@ -14,7 +14,7 @@ const addReference2 = async (Reference) =>{
       salesAgentId,
       called,
     } = Reference;
- const newReference = new Reference({
+    const newReference = new Reference({
       firstName,
       lastName,
       phoneNumber,
@@ -25,12 +25,12 @@ const addReference2 = async (Reference) =>{
       salesAgentId,
       called,
     });
-  const savedReference = await newReference.save();
-  res.status(201).json(savedReference);
-} catch (err) {
-  res.status(400).json({ error: err.message });
-}
-}
+    const savedReference = await newReference.save();
+    res.status(201).json(savedReference);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
 
 //add a new reference (frontend)
 const addReference = async (req, res) => {
@@ -62,7 +62,7 @@ const addReference = async (req, res) => {
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
-}
+};
 
 //get references for a sales agent
 const getSalesAgentReferences = async (req, res) => {
@@ -73,7 +73,7 @@ const getSalesAgentReferences = async (req, res) => {
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
-}
+};
 
 //get qualified references
 const getQualifiedReferences = async (req, res) => {
@@ -83,7 +83,7 @@ const getQualifiedReferences = async (req, res) => {
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
-}
+};
 
 //get uncalled references
 const getUncalledReferences = async (req, res) => {
@@ -93,7 +93,7 @@ const getUncalledReferences = async (req, res) => {
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
-}
+};
 
 //get a reference by ID
 const getReferenceById = async (req, res) => {
@@ -101,13 +101,13 @@ const getReferenceById = async (req, res) => {
     const referenceId = req.params.referenceId;
     const reference = await Reference.findById(referenceId);
     if (!reference) {
-      return res.status(404).json({ error: 'Reference not found' });
+      return res.status(404).json({ error: "Reference not found" });
     }
     res.status(200).json(reference);
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
-}
+};
 
 //update a reference's name
 const updateReferenceName = async (req, res) => {
@@ -120,13 +120,13 @@ const updateReferenceName = async (req, res) => {
       { new: true }
     );
     if (!updatedReference) {
-      return res.status(404).json({ error: 'Reference not found' });
+      return res.status(404).json({ error: "Reference not found" });
     }
     res.status(200).json(updatedReference);
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
-}
+};
 
 //update a reference's address
 const updateReferenceAddress = async (req, res) => {
@@ -139,13 +139,13 @@ const updateReferenceAddress = async (req, res) => {
       { new: true }
     );
     if (!updatedReference) {
-      return res.status(404).json({ error: 'Reference not found' });
+      return res.status(404).json({ error: "Reference not found" });
     }
     res.status(200).json(updatedReference);
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
-}
+};
 
 //update a reference's profession
 const updateReferenceProfession = async (req, res) => {
@@ -158,13 +158,13 @@ const updateReferenceProfession = async (req, res) => {
       { new: true }
     );
     if (!updatedReference) {
-      return res.status(404).json({ error: 'Reference not found' });
+      return res.status(404).json({ error: "Reference not found" });
     }
     res.status(200).json(updatedReference);
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
-}
+};
 
 //update a reference's sales agent ID
 const updateReferenceSalesAgentId = async (req, res) => {
@@ -177,13 +177,13 @@ const updateReferenceSalesAgentId = async (req, res) => {
       { new: true }
     );
     if (!updatedReference) {
-      return res.status(404).json({ error: 'Reference not found' });
+      return res.status(404).json({ error: "Reference not found" });
     }
     res.status(200).json(updatedReference);
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
-}
+};
 
 //delete a reference
 const deleteReference = async (req, res) => {
@@ -191,13 +191,13 @@ const deleteReference = async (req, res) => {
     const referenceId = req.params.referenceId;
     const deletedReference = await Reference.findByIdAndDelete(referenceId);
     if (!deletedReference) {
-      return res.status(404).json({ error: 'Reference not found' });
+      return res.status(404).json({ error: "Reference not found" });
     }
-    res.status(200).json({ message: 'Reference deleted successfully' });
+    res.status(200).json({ message: "Reference deleted successfully" });
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
-}
+};
 
 //get all references
 const getAllReferences = async (req, res) => {
@@ -207,7 +207,7 @@ const getAllReferences = async (req, res) => {
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
-}
+};
 
 //mark a reference as qualified
 const markReferenceAsQualified = async (req, res) => {
@@ -219,13 +219,13 @@ const markReferenceAsQualified = async (req, res) => {
       { new: true }
     );
     if (!updatedReference) {
-      return res.status(404).json({ error: 'Reference not found' });
+      return res.status(404).json({ error: "Reference not found" });
     }
     res.status(200).json(updatedReference);
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
-}
+};
 
 //mark a reference as unqualified
 const markReferenceAsUnqualified = async (req, res) => {
@@ -237,13 +237,13 @@ const markReferenceAsUnqualified = async (req, res) => {
       { new: true }
     );
     if (!updatedReference) {
-      return res.status(404).json({ error: 'Reference not found' });
+      return res.status(404).json({ error: "Reference not found" });
     }
     res.status(200).json(updatedReference);
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
-}
+};
 
 //mark a reference as called
 const markReferenceAsCalled = async (req, res) => {
@@ -255,13 +255,13 @@ const markReferenceAsCalled = async (req, res) => {
       { new: true }
     );
     if (!updatedReference) {
-      return res.status(404).json({ error: 'Reference not found' });
+      return res.status(404).json({ error: "Reference not found" });
     }
     res.status(200).json(updatedReference);
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
-}
+};
 
 //mark a reference as uncalled
 const markReferenceAsUncalled = async (req, res) => {
@@ -273,15 +273,15 @@ const markReferenceAsUncalled = async (req, res) => {
       { new: true }
     );
     if (!updatedReference) {
-      return res.status(404).json({ error: 'Reference not found' });
+      return res.status(404).json({ error: "Reference not found" });
     }
     res.status(200).json(updatedReference);
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
-}
- //add comment to reference
- const addCommentToReference = async(req, res) =>{
+};
+//add comment to reference
+const addCommentToReference = async (req, res) => {
   try {
     const referenceId = req.params.referenceId;
     const { body } = req.body;
@@ -294,22 +294,22 @@ const markReferenceAsUncalled = async (req, res) => {
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
-}
+};
 module.exports = {
-    addReference,
-    addReference2,
-    getSalesAgentReferences,
-    getQualifiedReferences,
-    getUncalledReferences,
-    getAllReferences,
-    updateReferenceName,
-    updateReferenceAddress,
-    updateReferenceProfession,
-    updateReferenceSalesAgentId,
-    deleteReference,
-    markReferenceAsCalled,
-    markReferenceAsUncalled,
-    markReferenceAsQualified,
-    markReferenceAsUnqualified,
-    addCommentToReference
-}
+  addReference,
+  addReference2,
+  getSalesAgentReferences,
+  getQualifiedReferences,
+  getUncalledReferences,
+  getAllReferences,
+  updateReferenceName,
+  updateReferenceAddress,
+  updateReferenceProfession,
+  updateReferenceSalesAgentId,
+  deleteReference,
+  markReferenceAsCalled,
+  markReferenceAsUncalled,
+  markReferenceAsQualified,
+  markReferenceAsUnqualified,
+  addCommentToReference,
+};

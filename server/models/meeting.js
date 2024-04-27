@@ -1,4 +1,5 @@
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
+const Reference = require("./reference");
 const { Schema } = mongoose;
 
 const meetingSchema = new Schema({
@@ -10,12 +11,11 @@ const meetingSchema = new Schema({
   outcome: { type: String, required: true },
   type: { type: String, required: true },
   refrence: {
-    type: [String],
-    default: undefined,
-    required: true,
+    type: [{ type: Schema.Types.ObjectId, ref: "Refrence" }],
+    default: [],
   },
 });
 
 const Meeting = mongoose.model("Meeting", meetingSchema);
 
-export default Meeting;
+module.exports = Meeting;

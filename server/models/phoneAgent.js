@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
 const { Schema } = mongoose;
 const User = require("./user");
 const Schedule = require("./schedule");
@@ -15,4 +15,4 @@ const phoneAgentSchema = new Schema({
 
 const PhoneAgent = User.discriminator("PhoneAgent", phoneAgentSchema);
 
-export default PhoneAgent;
+module.export = PhoneAgent;

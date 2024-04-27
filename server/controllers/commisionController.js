@@ -1,29 +1,36 @@
-import Commission from '../server/models/commisions';
-import Sales from '../server/models/sales';
-import getSalesAgentSales2 from '../controllers2/salesController';
+const Commission = require("../models/commisions");
+const Sales = require("../models/sales");
+const { getSalesAgentSales2 } = require("./salesController");
 
 //create a new commission for the sales agent
-const createSalesAgentCommission = async (Sales) => {
+const createSalesAgentCommission = async (Sales, res) => {
   try {
-    const { salesAgentId, phoneAgentId, buyerId, fullPayment, upfrontPayment, date, numOfReferences, productPrice, paymentType } = Sales;
-    if (upfrontPayment>=295){
-      amount==20;
-    }
-    else if (upfrontPayment>=200 ){
-      amount==15;
-    }
-    else if (upfrontPayment>=100){
-      amount==10;
-    }
-    else if (upfrontPayment>=50){
-      amount==5;
-    }
-    else {
-      amount==0;
+    const {
+      salesAgentId,
+      phoneAgentId,
+      buyerId,
+      fullPayment,
+      upfrontPayment,
+      date,
+      numOfReferences,
+      productPrice,
+      paymentType,
+    } = Sales;
+    let amount = 0;
+    if (upfrontPayment >= 295) {
+      amount = 20;
+    } else if (upfrontPayment >= 200) {
+      amount = 15;
+    } else if (upfrontPayment >= 100) {
+      amount = 10;
+    } else if (upfrontPayment >= 50) {
+      amount = 5;
+    } else {
+      amount = 0;
     }
 
-    if (upfrontPayment>0 && numOfReferences>=10){
-      amount+=5;
+    if (upfrontPayment > 0 && numOfReferences >= 10) {
+      amount += 5;
     }
     //commission for the sales agent
     const newCommission = new Commission({
@@ -39,34 +46,42 @@ const createSalesAgentCommission = async (Sales) => {
 };
 
 //5 euro comission for travelling fees
-const create5euroCommision = async (salesAgentId) =>{
+const create5euroCommision = async (salesAgentId, res) => {
   const amount = 5;
-try{
-  const newCommission = new Commission({
-    salesAgentId,
-    amount,
-    approved: false, //set default approval status to false
-  });
-  const savedCommission = await newCommission.save();
-  res.status(201).json(savedCommission);
-} catch (err) {
-  res.status(400).json({ error: err.message });
-}
+  try {
+    const newCommission = new Commission({
+      salesAgentId,
+      amount,
+      approved: false, //set default approval status to false
+    });
+    const savedCommission = await newCommission.save();
+    res.status(201).json(savedCommission);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
 };
 
-
 //create a new comission for the phone agent
-const createPhoneAgentCommission = async (Sales) => {
+const createPhoneAgentCommission = async (Sales, res) => {
   try {
-    const { salesAgentId, phoneAgentId, buyerId, fullPayment, upfrontPayment, date, numOfReferences, productPrice, paymentType } = Sales;
-    if (upfrontPayment>50)
-    {
-      amount = 6.50;
+    const {
+      salesAgentId,
+      phoneAgentId,
+      buyerId,
+      fullPayment,
+      upfrontPayment,
+      date,
+      numOfReferences,
+      productPrice,
+      paymentType,
+    } = Sales;
+    let amount = 0;
+    if (upfrontPayment > 50) {
+      amount = 6.5;
+    } else {
+      amount = 1.5;
     }
-    else{
-      amount=1.50;
-    }
-    //commission for the sales agent
+    //commission for the phone agent
     const newCommission = new Commission({
       phoneAgentId,
       amount,
@@ -80,21 +95,29 @@ const createPhoneAgentCommission = async (Sales) => {
 };
 
 //calculate the monthly comission for a sales agent
-const calculateMonthlyComission = async(salesAgentId) =>{
-  const numOfSales = getSalesAgentSales2(salesAgentId);
-  if (numOfSales>=7)
-  {
-    amount = numOfSales * 160;
+const calculateMonthlyComission = async (salesAgentId, res) => {
+  try {
+    const numOfSales = await getSalesAgentSales2(salesAgentId);
+    let amount = 0;
+    if (numOfSales >= 7) {
+      amount = numOfSales * 160;
+    } else if (numOfSales >= 5) {
+      amount = numOfSales * 150;
+    } else if (numOfSales >= 3) {
+      amount = numOfSales * 140;
+    }
+
+    const newCommission = new Commission({
+      salesAgentId: salesAgentId,
+      amount: amount,
+      approved: false, // Set default approval status to false
+    });
+    const savedCommission = await newCommission.save();
+    res.status(201).json(savedCommission);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
   }
-  else if (numOfSales >=5)
-  {
-    amount = numOfSales * 150;
-  }
-  else if (numOfSales >=3)
-  {
-    amount = numOfSales * 140;
-  }
-}
+};
 
 //get a commission by ID
 const getCommission = async (req, res) => {
@@ -102,7 +125,7 @@ const getCommission = async (req, res) => {
     const commissionId = req.params.commissionId;
     const commission = await Commission.findById(commissionId);
     if (!commission) {
-      return res.status(404).json({ error: 'Commission not found' });
+      return res.status(404).json({ error: "Commission not found" });
     }
     res.status(200).json(commission);
   } catch (err) {
@@ -121,7 +144,7 @@ const updateCommissionAmount = async (req, res) => {
       { new: true }
     );
     if (!updatedCommission) {
-      return res.status(404).json({ error: 'Commission not found' });
+      return res.status(404).json({ error: "Commission not found" });
     }
     res.status(200).json(updatedCommission);
   } catch (err) {
@@ -135,9 +158,9 @@ const deleteCommission = async (req, res) => {
     const commissionId = req.params.commissionId;
     const deletedCommission = await Commission.findByIdAndDelete(commissionId);
     if (!deletedCommission) {
-      return res.status(404).json({ error: 'Commission not found' });
+      return res.status(404).json({ error: "Commission not found" });
     }
-    res.status(200).json({ message: 'Commission deleted successfully' });
+    res.status(200).json({ message: "Commission deleted successfully" });
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
@@ -183,7 +206,7 @@ const approveCommission = async (req, res) => {
       { new: true }
     );
     if (!updatedCommission) {
-      return res.status(404).json({ error: 'Commission not found' });
+      return res.status(404).json({ error: "Commission not found" });
     }
     res.status(200).json(updatedCommission);
   } catch (err) {
@@ -201,7 +224,7 @@ const rejectCommission = async (req, res) => {
       { new: true }
     );
     if (!updatedCommission) {
-      return res.status(404).json({ error: 'Commission not found' });
+      return res.status(404).json({ error: "Commission not found" });
     }
     res.status(200).json(updatedCommission);
   } catch (err) {
@@ -233,4 +256,5 @@ module.exports = {
   approveCommission,
   rejectCommission,
   getCommissionsByAgent,
+  calculateMonthlyComission,
 };

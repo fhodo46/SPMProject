@@ -1,40 +1,34 @@
-import Sales from '../server/models/sales';
-import { createSalesAgentCommission, createPhoneAgentCommission, create5euroCommision } from '../controllers2/commisionController';
-import {createPhoneAgentCommission} from '../controllers2/commisionController';
-import {createDebt} from '../controllers2/debtController';
-import {createReference2} from '../controllers2/referenceController';
+const Sales = require("../models/sales");
+const {
+  createSalesAgentCommission,
+} = require("../controllers/commisionController");
+const {
+  createPhoneAgentCommission,
+} = require("../controllers/commisionController");
+const { create5euroCommision } = require("../controllers/commisionController");
+const { createDebt } = require("../controllers/debtController");
+const { createReference2 } = require("../controllers/referenceController");
 
 //create a new sale
 const createSale = async (req, res) => {
   try {
-    const { salesAgentId, phoneAgentId, buyerId, fullPayment, upfrontPayment, date, numOfReferences, productPrice, paymentType } = req.body;
-    
-    const discount = calculateDiscount(numOfReferences);
-    productPrice = productPrice - discount;
+    const new_sales_info = req.body;
 
-    const newSale = new Sales({
-      salesAgentId,
-      phoneAgentId,
-      buyerId,
-      fullPayment,
-      upfrontPayment,
-      date,
-      numOfReferences,
-      productPrice,
-      paymentType,
-    });
+    const discount = calculateDiscount(new_sales_info.numOfReferences);
+    new_sales_info.productPrice = new_sales_info.productPrice - discount;
+
+    const newSale = new Sales({ ...new_sales_info });
     const savedSale = await newSale.save();
     res.status(201).json(savedSale);
     createSalesAgentCommission(savedSale);
     createPhoneAgentCommission(savedSale);
-    create5euroCommision(salesAgentId);
+    create5euroCommision(new_sales_info.salesAgentId);
 
-    if (!fullPayment)
-    {
+    if (!new_sales_info.fullPayment) {
       createDebt(newSale);
     }
-    
   } catch (err) {
+    console.log(err);
     res.status(400).json({ error: err.message });
   }
 };
@@ -51,17 +45,18 @@ const getSalesAgentSales = async (req, res) => {
 };
 
 //get sales for a sales agent in the last month (backend)
-const getSalesAgentSales2 = async(salesAgentId) =>{
-
+const getSalesAgentSales2 = async (salesAgentId) => {
   const endTime = Date.now;
   const startTime = new Date();
   startTime.setMonth(startTime.getMonth() - 1);
 
-  const sales = await Sales.countDocuments({ salesAgentId:salesAgentId,
-  date: {$gte:startTime, $lte:endTime} });
+  const sales = await Sales.countDocuments({
+    salesAgentId: salesAgentId,
+    date: { $gte: startTime, $lte: endTime },
+  });
 
   return sales;
-}
+};
 
 //get sales for a phone agent
 const getPhoneAgentSales = async (req, res) => {
@@ -108,69 +103,75 @@ const getSalesByDateRange = async (req, res) => {
     res.status(400).json({ error: err.message });
   }
 };
- //update sale details
- const updateSaleDetails = async (req, res) => {
-    try {
-      const saleId = req.params.saleId;
-      const { paymentType, upfrontPayment, numOfReferences } = req.body;
-      const updatedSale = await Sales.findByIdAndUpdate(
-        saleId,
-        { paymentType, upfrontPayment, numOfReferences },
-        { new: true }
-      );
-      res.status(200).json(updatedSale);
-    } catch (err) {
-      res.status(400).json({ error: err.message });
-    }
+//update sale details
+const updateSaleDetails = async (req, res) => {
+  try {
+    const saleId = req.params.saleId;
+    const { paymentType, upfrontPayment, numOfReferences } = req.body;
+    const updatedSale = await Sales.findByIdAndUpdate(
+      saleId,
+      { paymentType, upfrontPayment, numOfReferences },
+      { new: true }
+    );
+    res.status(200).json(updatedSale);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
   }
+};
 
-  //calculate discount
-  const calculateDiscount = (numOfReferences) => {
-      const discount = Math.min(numOfReferences * 50, 500);
-      return discount;
-    }
-  
-
-  //generate contract PDF
-  const generateContractPDF = async(req, res) => {
-    try {
-      const saleId = req.params.saleId;
-      const sale = await Sales.findById(saleId);
-      const pdfBuffer = await pdfService.generateContractPDF(sale);
-      res.setHeader('Content-Type', 'application/pdf');
-      res.setHeader('Content-Disposition', 'attachment; filename=contract.pdf');
-      res.send(pdfBuffer);
-    } catch (err) {
-      res.status(400).json({ error: err.message });
-    }
+//calculate discount
+const calculateDiscount = (numOfReferences) => {
+  if (
+    typeof numOfReferences === "number" &&
+    !isNaN(numOfReferences) &&
+    numOfReferences >= 0
+  ) {
+    const discount = Math.min(numOfReferences * 50, 500);
+    return discount;
+  } else {
+    return 0;
   }
+};
 
-  //calculate commission for sale
-  // const calculateCommissionForSale = async(req, res) => {
-  //   try {
-  //     const saleId = req.params.saleId;
-  //     const sale = await Sales.findById(saleId);
-  //     const { upfrontPayment, numOfReferences } = sale;
+//generate contract PDF
+const generateContractPDF = async (req, res) => {
+  try {
+    const saleId = req.params.saleId;
+    const sale = await Sales.findById(saleId);
+    const pdfBuffer = await pdfService.generateContractPDF(sale);
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader("Content-Disposition", "attachment; filename=contract.pdf");
+    res.send(pdfBuffer);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
 
-  //     let commission;
-  //     if (numOfReferences === 10) {
-  //       if (upfrontPayment >= 295) commission = 25;
-  //       else if (upfrontPayment >= 200) commission = 20;
-  //       else if (upfrontPayment >= 100) commission = 15;
-  //       else if (upfrontPayment >= 50) commission = 10;
-  //     } else {
-  //       if (upfrontPayment >= 295) commission = 20;
-  //       else if (upfrontPayment >= 200) commission = 15;
-  //       else if (upfrontPayment >= 100) commission = 10;
-  //       else if (upfrontPayment >= 50) commission = 5;
-  //     }
+//calculate commission for sale
+// const calculateCommissionForSale = async(req, res) => {
+//   try {
+//     const saleId = req.params.saleId;
+//     const sale = await Sales.findById(saleId);
+//     const { upfrontPayment, numOfReferences } = sale;
 
-  //     res.status(200).json({ commission });
-  //   } catch (err) {
-  //     res.status(400).json({ error: err.message });
-  //   }
-  // }
+//     let commission;
+//     if (numOfReferences === 10) {
+//       if (upfrontPayment >= 295) commission = 25;
+//       else if (upfrontPayment >= 200) commission = 20;
+//       else if (upfrontPayment >= 100) commission = 15;
+//       else if (upfrontPayment >= 50) commission = 10;
+//     } else {
+//       if (upfrontPayment >= 295) commission = 20;
+//       else if (upfrontPayment >= 200) commission = 15;
+//       else if (upfrontPayment >= 100) commission = 10;
+//       else if (upfrontPayment >= 50) commission = 5;
+//     }
 
+//     res.status(200).json({ commission });
+//   } catch (err) {
+//     res.status(400).json({ error: err.message });
+//   }
+// }
 
 module.exports = {
   createSale,
@@ -183,5 +184,5 @@ module.exports = {
   updateSaleDetails,
   //calculateCommissionForSale,
   calculateDiscount,
-  generateContractPDF
+  generateContractPDF,
 };

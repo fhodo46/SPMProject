@@ -1,24 +1,31 @@
-import Debt from '../server/models/debt';
-import Sales from '../server/models/sales';
+const Debt = require("../models/debt");
+const Sales = require("../models/sales");
 
 // Create a new debt
-const createDebt = async (Sales) => {
+const createDebt = async (Sales, monthlyPayment, res) => {
   try {
-    const { salesAgentId, phoneAgentId, buyerId, fullPayment, upfrontPayment, date, numOfReferences, productPrice, paymentType } = Sales;
+    const {
+      salesAgentId,
+      phoneAgentId,
+      buyerId,
+      fullPayment,
+      upfrontPayment,
+      date,
+      numOfReferences,
+      productPrice,
+      paymentType,
+    } = Sales;
 
     //set next date
     const nextDate = new Date();
-    nextDate.setMonth(nextDate.getMonth() +1);
-    //default value of months for debt
-    monthlyPay=12;
-    //calculate amount to be payed
-    amount = (productPrice - upfrontPayment) / monthlyPay;
+    nextDate.setMonth(nextDate.getMonth() + 1);
+    amount = (productPrice - upfrontPayment) / monthlyPayment;
 
-    clientId=buyerId;
-   const newDebt = new Debt({
+    clientId = buyerId;
+    const newDebt = new Debt({
       nextDate,
       amount,
-      monthlyPay,
+      monthlyPayment,
       phoneAgentId,
       salesAgentId,
       clientId,
@@ -36,7 +43,7 @@ const getDebt = async (req, res) => {
     const debtId = req.params.debtId;
     const debt = await Debt.findById(debtId);
     if (!debt) {
-      return res.status(404).json({ error: 'Debt not found' });
+      return res.status(404).json({ error: "Debt not found" });
     }
     res.status(200).json(debt);
   } catch (err) {
@@ -49,9 +56,13 @@ const updateDebtPaymentDate = async (req, res) => {
   try {
     const debtId = req.params.debtId;
     const { nextDate } = req.body;
-    const updatedDebt = await Debt.findByIdAndUpdate(debtId, { nextDate }, { new: true });
+    const updatedDebt = await Debt.findByIdAndUpdate(
+      debtId,
+      { nextDate },
+      { new: true }
+    );
     if (!updatedDebt) {
-      return res.status(404).json({ error: 'Debt not found' });
+      return res.status(404).json({ error: "Debt not found" });
     }
     res.status(200).json(updatedDebt);
   } catch (err) {
@@ -64,9 +75,13 @@ const updateDebtAmount = async (req, res) => {
   try {
     const debtId = req.params.debtId;
     const { amount } = req.body;
-    const updatedDebt = await Debt.findByIdAndUpdate(debtId, { amount }, { new: true });
+    const updatedDebt = await Debt.findByIdAndUpdate(
+      debtId,
+      { amount },
+      { new: true }
+    );
     if (!updatedDebt) {
-      return res.status(404).json({ error: 'Debt not found' });
+      return res.status(404).json({ error: "Debt not found" });
     }
     res.status(200).json(updatedDebt);
   } catch (err) {
@@ -79,9 +94,13 @@ const updateDebtMonthlyPayment = async (req, res) => {
   try {
     const debtId = req.params.debtId;
     const { monthlyPay } = req.body;
-    const updatedDebt = await Debt.findByIdAndUpdate(debtId, { monthlyPay }, { new: true });
+    const updatedDebt = await Debt.findByIdAndUpdate(
+      debtId,
+      { monthlyPay },
+      { new: true }
+    );
     if (!updatedDebt) {
-      return res.status(404).json({ error: 'Debt not found' });
+      return res.status(404).json({ error: "Debt not found" });
     }
     res.status(200).json(updatedDebt);
   } catch (err) {
@@ -95,9 +114,9 @@ const deleteDebt = async (req, res) => {
     const debtId = req.params.debtId;
     const deletedDebt = await Debt.findByIdAndDelete(debtId);
     if (!deletedDebt) {
-      return res.status(404).json({ error: 'Debt not found' });
+      return res.status(404).json({ error: "Debt not found" });
     }
-    res.status(200).json({ message: 'Debt deleted successfully' });
+    res.status(200).json({ message: "Debt deleted successfully" });
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
@@ -150,9 +169,13 @@ const getDebtsBySalesAgent = async (req, res) => {
 const markDebtAsPaid = async (req, res) => {
   try {
     const debtId = req.params.debtId;
-    const updatedDebt = await Debt.findByIdAndUpdate(debtId, { paid: true }, { new: true });
+    const updatedDebt = await Debt.findByIdAndUpdate(
+      debtId,
+      { paid: true },
+      { new: true }
+    );
     if (!updatedDebt) {
-      return res.status(404).json({ error: 'Debt not found' });
+      return res.status(404).json({ error: "Debt not found" });
     }
     res.status(200).json(updatedDebt);
   } catch (err) {

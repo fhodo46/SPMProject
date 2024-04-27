@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const commisionSchema = new Schema({
@@ -9,4 +9,4 @@ const commisionSchema = new Schema({
 
 const Commisions = mongoose.model("Commisions", commisionSchema);
 
-export default Commisions;
+module.exports = Commisions;

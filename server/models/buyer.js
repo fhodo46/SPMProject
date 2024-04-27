@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const buyerSchema = new Schema({
@@ -14,4 +14,4 @@ const buyerSchema = new Schema({
 
 const Buyer = mongoose.model("Buyer", buyerSchema);
 
-export default Buyer;
+module.exports = Buyer;
