@@ -8,7 +8,11 @@ const { connectToDb } = require("./database/db");
 const logInRouter = require("../server/routers/loginRouter");
 const signUpRouter = require("../server/routers/signUpRouter");
 const authorization = require("../server/routers/authorization");
-const allowedOrigins = ["https://localhost:3000", "postman://app"];
+const allowedOrigins = [
+  "https://localhost:3000",
+  "postman://app",
+  "https://localhost:5443",
+];
 
 app.use(
   cors({
