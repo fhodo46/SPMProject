@@ -7,12 +7,17 @@ const cors = require("cors");
 const { connectToDb } = require("./database/db");
 const logInRouter = require("../server/routers/loginRouter");
 const signUpRouter = require("../server/routers/signUpRouter");
+const commissionRouter = require ("../server/routers/commissionRouter");
+const debtRouter = require ("../server/routers/debtRouter");
+const inventoryRouter = require ("../server/routers/inventoryRouter");
+const meetingRouter = require ("../server/routers/meetingRouter");
+const redListRouter = require ("../server/routers/redListRouter");
+const referenceRouter = require ("../server/routers/referenceRouter");
+const reservedCallRouter = require ("../server/routers/reservedCallRouter");
+const salesRouter = require ("../server/routers/salesRouter");
+const scheduleRouter = require ("../server/routers/scheduleRouter");
 const authorization = require("../server/routers/authorization");
-const allowedOrigins = [
-  "https://localhost:3000",
-  "postman://app",
-  "https://localhost:5443",
-];
+const allowedOrigins = ["https://localhost:3000", "postman://app"];
 
 app.use(
   cors({
@@ -32,6 +37,15 @@ app.use(
 app.use("/logIn", logInRouter);
 app.use("/permission", authorization);
 app.use("/signUp", signUpRouter);
+app.use("/debts", debtRouter);
+app.use("/inventory", inventoryRouter);
+app.use("/meetings", meetingRouter);
+app.use("/redlist", redListRouter);
+app.use("/references", referenceRouter);
+app.use("/reservedCalls", reservedCallRouter);
+app.use("/sales", salesRouter);
+app.use("/schedules", scheduleRouter);
+app.use("commissions", commissionRouter);
 
 const options = {
   key: fs.readFileSync("./localhost.key"),
