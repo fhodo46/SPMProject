@@ -2,7 +2,7 @@
 /* eslint-disable @next/next/no-img-element */
 import React, { useContext, useRef, useState } from 'react';
 import Link from 'next/link';
-
+import { useRouter } from 'next/navigation';
 import { StyleClass } from 'primereact/styleclass';
 import { Button } from 'primereact/button';
 import { Ripple } from 'primereact/ripple';
@@ -12,6 +12,17 @@ import { NodeRef } from '@/types';
 import { classNames } from 'primereact/utils';
 
 const LandingPage = () => {
+    const router = useRouter();
+
+    const handleLogin = () => {
+        // Navigate to the login page
+        router.push('/auth/login');
+    };
+
+    const handleRegister = () => {
+        // Navigate to the register page
+        router.push('/register');
+    };
     const [isHidden, setIsHidden] = useState(false);
     const { layoutConfig } = useContext(LayoutContext);
     const menuRef = useRef<HTMLElement | null>(null);
@@ -59,8 +70,8 @@ const LandingPage = () => {
                             </li>
                         </ul>
                         <div className="flex justify-content-between lg:block border-top-1 lg:border-top-none surface-border py-3 lg:py-0 mt-3 lg:mt-0">
-                            <Button label="Login" text rounded className="border-none font-light line-height-2 text-blue-500"></Button>
-                            <Button label="Register" rounded className="border-none ml-5 font-light line-height-2 bg-blue-500 text-white"></Button>
+                            <Button label="Login" text rounded className="border-none font-light line-height-2 text-blue-500" onClick={handleLogin}></Button>
+                            <Button label="Register" rounded className="border-none ml-5 font-light line-height-2 bg-blue-500 text-white" onClick={handleRegister}></Button>
                         </div>
                     </div>
                 </div>
