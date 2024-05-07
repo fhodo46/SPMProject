@@ -1,11 +1,16 @@
 const express = require("express");
 const router = express();
 const commissionController = require('../controllers/commisionController');
+const login_controller = require ('../controllers/userProxy');
 
 router.use(bodyParser.json());
 
 //create a commission
-router.post('/commissions', commissionController.createCommissionFRONT);
+router.post('/commissions/',  (req, res)=>{
+    login_controller.authorize(req, res, ()=>{
+    commissionController.createCommissionFRONT(req, res);
+    })
+});
 
 //get a commission by ID
 router.get('/commissions/:commissionId', commissionController.getCommission);
