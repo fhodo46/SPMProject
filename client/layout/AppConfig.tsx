@@ -11,15 +11,15 @@ import { AppConfigProps, LayoutConfig, LayoutState } from '@/types';
 import { LayoutContext } from './context/layoutcontext';
 
 const AppConfig = (props: AppConfigProps) => {
-    // useEffect(() => {
-    //     const changeThemeToDark = () => {
-    //         _changeTheme('viva-dark', 'dark');
-    //     };
+    useEffect(() => {
+        const changeThemeToDark = () => {
+            _changeTheme('viva-dark', 'dark');
+        };
 
-    //     changeThemeToDark();
+        changeThemeToDark();
 
-    //     return () => {};
-    // }, []);
+        return () => {};
+    }, []);
 
     const [scales] = useState([12, 13, 14, 15, 16]);
     const { layoutConfig, setLayoutConfig, layoutState, setLayoutState } = useContext(LayoutContext);
