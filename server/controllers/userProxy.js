@@ -1,14 +1,19 @@
 const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 
+const get_username_and_role_from_token = (token) => {
+  const decoded = jwt.verify(token, process.env.JWT_KEY);
+  return { username: decoded.username, role: decoded.role };
+};
+
 const token_issue = (user) => {
   const accessToken = jwt.sign(
-    { name: user.name, surname: user.surname },
+    { id: user._id, username: user.username, role: user.status },
     process.env.JWT_KEY,
     { expiresIn: 900 }
   );
   const refreshToken = jwt.sign(
-    { name: user.name, surname: user.surname },
+    { id: user._id, username: user.username, role: user.status },
     process.env.JWT_KEY,
     { expiresIn: "1h" }
   );
@@ -45,12 +50,13 @@ const tokenRefresher = (refreshToken) => {
   }
 };
 
-const authorize = (req, res) => {
+const authorize = (req, res, action) => {
   const tokens = req.cookies ? req.cookies.tokenCookie : undefined;
   if (tokens) {
     const checkAccess = tokenChecker(tokens.accessToken);
     if (checkAccess.result) {
-      res.status(200).json("Authorized!");
+      const { id, username, role } = checkAccess.payload;
+      action();
     } else {
       const refreshAccess = tokenRefresher(tokens.refreshToken);
       if (refreshAccess.result) {
@@ -63,11 +69,11 @@ const authorize = (req, res) => {
           {
             maxAge: 3600000,
             httpOnly: true,
-            secure: false,
+            secure: true,
             sameSite: "none",
           }
         );
-        res.status(200).json("Authorized!");
+        action();
       } else {
         res.status(401).json(refreshAccess.content);
       }
@@ -76,6 +82,16 @@ const authorize = (req, res) => {
     res.status(401).json("No token presented");
   }
 };
+
+const get_id_from_token = (req)=>{
+  const decoded = jwt.verify(req.cookies.tokenCookie.accessToken, process.env.JWT_KEY);
+  return decoded.id;
+}
+
+const get_role_from_token = (req)=>{
+  const decoded = jwt.verify(req.cookies.tokenCookie.accessToken, process.env.JWT_KEY);
+  return decoded.role;
+}
 
 async function createUser(req, res) {
   try {
@@ -103,8 +119,6 @@ const verify_credentials = async (username, password) => {
     return { code: 2, user: {} };
   }
 };
-
-
 
 const login_process = async (username, password) => {
   const result = await verify_credentials(username, password);
@@ -178,4 +192,7 @@ module.exports = {
   getUserByUsername,
   login_process,
   authorize,
+  get_username_and_role_from_token,
+  get_id_from_token,
+  get_role_from_token
 };

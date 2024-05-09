@@ -1,5 +1,5 @@
-const RedListEntry = require("../server/models/redList");
-const ReservedCall = reuqire("../server/models/reservedCalls");
+const RedListEntry = require("../models/redList");
+const ReservedCall = require("../models/reservedCalls");
 
 //create a red list entry
 const createRedListEntry = async (req, res) => {

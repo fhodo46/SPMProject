@@ -1,4 +1,4 @@
-const ReservedCall = require("../server/models/reservedCalls");
+const ReservedCall = require("../models/reservedCalls");
 
 //create a new reserved call
 const createReservedCall = async (req, res) => {
@@ -208,4 +208,5 @@ module.exports = {
   getReservedCallsByAgent,
   getReservedCallsByReference,
   addComment,
+  updateReservedCallAgent,
 };

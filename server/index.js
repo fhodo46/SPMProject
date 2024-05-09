@@ -45,7 +45,7 @@ app.use("/references", referenceRouter);
 app.use("/reservedCalls", reservedCallRouter);
 app.use("/sales", salesRouter);
 app.use("/schedules", scheduleRouter);
-app.use("commissions", commissionRouter);
+app.use("/commissions", commissionRouter);
 
 const options = {
   key: fs.readFileSync("./localhost.key"),

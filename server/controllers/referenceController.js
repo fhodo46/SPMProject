@@ -312,4 +312,5 @@ module.exports = {
   markReferenceAsQualified,
   markReferenceAsUnqualified,
   addCommentToReference,
+  getReferenceById,
 };
