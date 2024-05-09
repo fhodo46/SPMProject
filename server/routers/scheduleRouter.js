@@ -1,31 +1,65 @@
 const express = require("express");
 const router = express();
-const scheduleController = require('../controllers/scheduleController');
+const scheduleController = require("../controllers/scheduleController");
+login_controller = require("../controllers/userProxy");
+const bodyParser = require("body-parser");
 
 router.use(bodyParser.json());
 
 //create a new schedule
-router.post('/schedules', scheduleController.createSchedule);
+router.post("/create", (req, res) => {
+  login_controller.authorize(req, res, () => {
+    scheduleController.createSchedule(req, res);
+  });
+});
 
 //get a schedule by ID
-router.get('/schedules/:scheduleId', scheduleController.getSchedule);
+router.get("/:scheduleId", (req, res) => {
+  login_controller.authorize(req, res, () => {
+    scheduleController.getSchedule(req, res);
+  });
+});
 
 //update a schedule
-router.put('/schedules/:scheduleId', scheduleController.updateSchedule);
+router.put("/update/:scheduleId", (req, res) => {
+  login_controller.authorize(req, res, () => {
+    scheduleController.updateSchedule(req, res);
+  });
+});
 
 //delete a schedule
-router.delete('/schedules/:scheduleId', scheduleController.deleteSchedule);
+router.delete("/delete/:scheduleId", (req, res) => {
+  login_controller.authorize(req, res, () => {
+    scheduleController.deleteSchedule(req, res);
+  });
+});
 
 //get all schedules
-router.get('/schedules', scheduleController.getAllSchedules);
+router.get("/all", (req, res) => {
+  login_controller.authorize(req, res, () => {
+    scheduleController.getAllSchedules(req, res);
+  });
+});
 
 //get schedules by sales agent
-router.get('/schedules/agent/:salesAgentId', scheduleController.getSchedulesBySalesAgent);
+router.get("/agent/:salesAgentId", (req, res) => {
+  login_controller.authorize(req, res, () => {
+    scheduleController.getSchedulesBySalesAgent(req, res);
+  });
+});
 
 //mark schedule as had meeting
-router.put('/schedules/:scheduleId/hadMeeting', scheduleController.markScheduleAsHadMeeting);
+router.put("/:scheduleId/hadMeeting", (req, res) => {
+  login_controller.authorize(req, res, () => {
+    scheduleController.markScheduleAsHadMeeting(req, res);
+  });
+});
 
 //mark schedule as no meeting
-router.put('/schedules/:scheduleId/noMeeting', scheduleController.markScheduleAsNoMeeting);
+router.put("/:scheduleId/noMeeting", (req, res) => {
+  login_controller.authorize(req, res, () => {
+    scheduleController.markScheduleAsNoMeeting(req, res);
+  });
+});
 
 module.exports = router;

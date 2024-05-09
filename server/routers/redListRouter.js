@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express();
 const redListController = require('../controllers/redListController');
+const bodyParser = require("body-parser");
+
 
 router.use(bodyParser.json());
 

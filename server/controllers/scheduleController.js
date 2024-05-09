@@ -1,4 +1,5 @@
 const Schedule = require("../models/Schedule");
+const login_controller = require("../controllers/userProxy");
 
 //create a new schedule
 const createSchedule = async (req, res) => {
@@ -77,7 +78,7 @@ const getAllSchedules = async (req, res) => {
 //get schedules by sales agent
 const getSchedulesBySalesAgent = async (req, res) => {
   try {
-    const salesAgentId = req.params.salesAgentId;
+    const salesAgentId = login_controller.get_id_from_token(req);
     const schedules = await Schedule.find({ salesAgentId });
     res.status(200).json(schedules);
   } catch (err) {

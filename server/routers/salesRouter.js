@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express();
 const salesController = require('../controllers/salesController');
+const bodyParser = require("body-parser");
+
 
 router.use(bodyParser.json());
 

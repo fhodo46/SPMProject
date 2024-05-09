@@ -1,42 +1,86 @@
 const express = require("express");
 const router = express();
-const commissionController = require('../controllers/commisionController');
-const login_controller = require ('../controllers/userProxy');
+const commissionController = require("../controllers/commisionController");
+const login_controller = require("../controllers/userProxy");
+const bodyParser = require("body-parser");
+
 
 router.use(bodyParser.json());
 
 //create a commission
-router.post('/commissions/',  (req, res)=>{
-    login_controller.authorize(req, res, ()=>{
-    commissionController.createCommissionFRONT(req, res);
-    })
+router.post("/create", (req, res) => {
+  login_controller.authorize(req, res, () => {
+    commissionController.createCommissionFRONT(req, res);
+  });
 });
 
 //get a commission by ID
-router.get('/commissions/:commissionId', commissionController.getCommission);
+router.get("/:commissionId", (req, res) => {
+  login_controller.authorize(req, res, () => {
+    commissionController.getCommission;
+  });
+});
 
 //update a commission's amount
-router.put('/commissions/:commissionId/amount', commissionController.updateCommissionAmount);
+router.put("/:commissionId/amount", (req, res) => {
+  login_controller.authorize(req, res, () => {
+    commissionController.updateCommissionAmount;
+  });
+});
 
 //delete a commission
-router.delete('/commissions/:commissionId', commissionController.deleteCommission);
+router.delete("/:commissionId", (req, res) => {
+  login_controller.authorize(req, res, () => {
+    commissionController.deleteCommission;
+  });
+});
 
 //get all commissions
-router.get('/commissions', commissionController.getAllCommissions);
+router.get("/retrieve", (req, res) => {
+  login_controller.authorize(req, res, () => {
+    commissionController.getAllCommissions;
+  });
+});
 
 //get approved commissions
-router.get('/commissions/approved', commissionController.getApprovedCommissions);
+router.get("/approved", (req, res) => {
+  login_controller.authorize(req, res, () => {
+    commissionController.getApprovedCommissions(req, res);
+  });
+});
 
 //get pending commissions
-router.get('/commissions/pending', commissionController.getPendingCommissions);
+router.get("/pending", (req, res) => {
+  login_controller.authorize(req, res, () => {
+    commissionController.getPendingCommissions;
+  });
+});
 
 //approve a commission
-router.put('/commissions/:commissionId/approve', commissionController.approveCommission);
+router.put("/:commissionId/approve", (req, res) => {
+  login_controller.authorize(req, res, () => {
+    commissionController.approveCommission;
+  });
+});
 
 //reject a commission
-router.put('/commissions/:commissionId/reject', commissionController.rejectCommission);
+router.put("/:commissionId/reject", (req, res) => {
+  login_controller.authorize(req, res, () => {
+    commissionController.rejectCommission;
+  });
+});
 
 //get commissions by agent
-router.get('/commissions/agent/:agentId', commissionController.getCommissionsByAgent);
+router.get("/agent/:agentId", (req, res) => {
+  login_controller.authorize(req, res, () => {
+    commissionController.getCommissionsByAgent;
+  });
+});
+
+router.post('/sales_agent/create', (req, res)=>{
+  login_controller.authorize(req, res, ()=>{
+    commissionController.createSalesAgentCommission(req.body, res);
+  })
+})
 
 module.exports = router;

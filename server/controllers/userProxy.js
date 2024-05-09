@@ -8,12 +8,12 @@ const get_username_and_role_from_token = (token) => {
 
 const token_issue = (user) => {
   const accessToken = jwt.sign(
-    { username: user.username, role: user.status },
+    { id: user._id, username: user.username, role: user.status },
     process.env.JWT_KEY,
     { expiresIn: 900 }
   );
   const refreshToken = jwt.sign(
-    { nusername: user.username, role: user.status },
+    { id: user._id, username: user.username, role: user.status },
     process.env.JWT_KEY,
     { expiresIn: "1h" }
   );
@@ -55,7 +55,7 @@ const authorize = (req, res, action) => {
   if (tokens) {
     const checkAccess = tokenChecker(tokens.accessToken);
     if (checkAccess.result) {
-      const { username, role } = checkAccess.payload;
+      const { id, username, role } = checkAccess.payload;
       action();
     } else {
       const refreshAccess = tokenRefresher(tokens.refreshToken);
@@ -82,6 +82,16 @@ const authorize = (req, res, action) => {
     res.status(401).json("No token presented");
   }
 };
+
+const get_id_from_token = (req)=>{
+  const decoded = jwt.verify(req.cookies.tokenCookie.accessToken, process.env.JWT_KEY);
+  return decoded.id;
+}
+
+const get_role_from_token = (req)=>{
+  const decoded = jwt.verify(req.cookies.tokenCookie.accessToken, process.env.JWT_KEY);
+  return decoded.role;
+}
 
 async function createUser(req, res) {
   try {
@@ -183,4 +193,6 @@ module.exports = {
   login_process,
   authorize,
   get_username_and_role_from_token,
+  get_id_from_token,
+  get_role_from_token
 };
