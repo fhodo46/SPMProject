@@ -4,12 +4,13 @@ const login_controller = require("../controllers/userProxy");
 //create a new schedule
 const createSchedule = async (req, res) => {
   try {
-    const { salesAgentId, startTime, endTime, hadMeeting } = req.body;
+    const { startTime, endTime, status } = req.body;
+    const salesAgentId = login_controller.get_id_from_token(req);
     const newSchedule = new Schedule({
       salesAgentId,
       startTime,
       endTime,
-      hadMeeting,
+      status,
     });
     const savedSchedule = await newSchedule.save();
     res.status(201).json(savedSchedule);
@@ -36,10 +37,10 @@ const getSchedule = async (req, res) => {
 const updateSchedule = async (req, res) => {
   try {
     const scheduleId = req.params.scheduleId;
-    const { startTime, endTime, hadMeeting } = req.body;
+    const { startTime, endTime, status } = req.body;
     const updatedSchedule = await Schedule.findByIdAndUpdate(
       scheduleId,
-      { startTime, endTime, hadMeeting },
+      { startTime, endTime, status },
       { new: true }
     );
     if (!updatedSchedule) {
@@ -92,7 +93,7 @@ const markScheduleAsHadMeeting = async (req, res) => {
     const scheduleId = req.params.scheduleId;
     const updatedSchedule = await Schedule.findByIdAndUpdate(
       scheduleId,
-      { hadMeeting: "true" },
+      { status: "scheduled" },
       { new: true }
     );
     if (!updatedSchedule) {
@@ -110,7 +111,7 @@ const markScheduleAsNoMeeting = async (req, res) => {
     const scheduleId = req.params.scheduleId;
     const updatedSchedule = await Schedule.findByIdAndUpdate(
       scheduleId,
-      { hadMeeting: "false" },
+      { status: "free" },
       { new: true }
     );
     if (!updatedSchedule) {

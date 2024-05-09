@@ -5,7 +5,10 @@ const scheduleSchema = new Schema({
   salesAgentId: { type: Number, required: true },
   startTime: { type: Date, required: true },
   endTime: { type: Date, required: true },
-  hadMeeting: { type: String, required: true },
+  status: {
+    type: String,
+    enum: ["free", "scheduled"],
+  },
 });
 
 const Schedule = mongoose.model("Schedule", scheduleSchema);
