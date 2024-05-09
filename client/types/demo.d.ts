@@ -61,6 +61,13 @@ export interface AppMailReplyProps {
 }
 
 declare namespace Demo {
+    interface ScheduleTimeSlot {
+        id?: number;
+        date?: Date;
+        startTime?: Date;
+        endTime?: Date;
+        status?: string;
+    }
     interface Task {
         id?: number;
         name?: string;

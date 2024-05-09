@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
+
 import { Button } from 'primereact/button';
 import { Menu } from 'primereact/menu';
 import React, { useContext, useEffect, useRef, useState } from 'react';
@@ -20,6 +21,7 @@ import { Toolbar } from 'primereact/toolbar';
 import { classNames } from 'primereact/utils';
 import { ProductService } from '@/demo/service/ProductService';
 import { Demo } from '@/types';
+import { ScheduleService } from '@/demo/service/ScheduleService';
 
 const page = () => {
     let emptyProduct: Demo.Product = {
@@ -35,6 +37,8 @@ const page = () => {
     };
 
     const [products, setProducts] = useState(null);
+    const [schedules, setSchedules] = useState(null);
+    const [datetime12h, setDateTime12h] = useState<Date | null>(null);
     const [productDialog, setProductDialog] = useState(false);
     const [deleteProductDialog, setDeleteProductDialog] = useState(false);
     const [deleteProductsDialog, setDeleteProductsDialog] = useState(false);
@@ -45,8 +49,12 @@ const page = () => {
     const toast = useRef<Toast>(null);
     const dt = useRef<DataTable<any>>(null);
 
+    // useEffect(() => {
+    //     ProductService.getProducts().then((data) => setProducts(data as any));
+    // }, []);
+
     useEffect(() => {
-        ProductService.getProducts().then((data) => setProducts(data as any));
+        ScheduleService.getSchedules().then((data) => setSchedules(data as any));
     }, []);
 
     const formatCurrency = (value: number) => {
@@ -200,8 +208,7 @@ const page = () => {
         return (
             <React.Fragment>
                 <div className="my-2">
-                    <Button label="New" icon="pi pi-plus" severity="success" className=" mr-2" onClick={openNew} />
-                    <Button label="Delete" icon="pi pi-trash" severity="danger" onClick={confirmDeleteSelected} disabled={!selectedProducts || !(selectedProducts as any).length} />
+                    <Button label="Add New" icon="pi pi-plus" severity="success" className=" mr-2" onClick={openNew} />
                 </div>
             </React.Fragment>
         );
@@ -210,8 +217,9 @@ const page = () => {
     const rightToolbarTemplate = () => {
         return (
             <React.Fragment>
-                <FileUpload mode="basic" accept="image/*" maxFileSize={1000000} chooseLabel="Import" className="mr-2 inline-block" />
-                <Button label="Export" icon="pi pi-upload" severity="help" onClick={exportCSV} />
+                <div className="my-2">
+                    <Button label="Delete" icon="pi pi-trash" severity="danger" onClick={confirmDeleteSelected} disabled={!selectedProducts || !(selectedProducts as any).length} />
+                </div>
             </React.Fragment>
         );
     };
@@ -325,26 +333,15 @@ const page = () => {
                 <div className="card">
                     <div className="flex align-items-center justify-content-between">
                         <h3 style={{ margin: '0 1rem 0' }}>Schedule</h3>
-                        <div>
-                            <Button type="button" icon="pi pi-ellipsis-v" rounded text className="p-button-plain" onClick={(event) => menu2.current?.toggle(event)} />
-                            <Menu
-                                ref={menu2}
-                                popup
-                                model={[
-                                    { label: 'Add New', icon: 'pi pi-fw pi-plus' },
-                                    { label: 'Remove', icon: 'pi pi-fw pi-minus' }
-                                ]}
-                            />
-                        </div>
                     </div>
                 </div>
             </div>
-            <div className="col-12 lg:col-12 xl:col-3">
+            {/* <div className="col-12 lg:col-12 xl:col-3">
                 <div className="flex align-items-center justify-content-between">
                     <Calendar inline />
                 </div>
-            </div>
-            <div className="col-12 lg:col-12 xl:col-9">
+            </div> */}
+            <div className="col-12 lg:col-12 xl:col-12">
                 <div className="grid crud-demo">
                     <div className="col-12">
                         <div className="card">
@@ -375,58 +372,20 @@ const page = () => {
                                 <Column body={actionBodyTemplate} headerStyle={{ minWidth: '10rem' }}></Column>
                             </DataTable>
 
-                            <Dialog visible={productDialog} style={{ width: '450px' }} header="Product Details" modal className="p-fluid" footer={productDialogFooter} onHide={hideDialog}>
-                                {product.image && <img src={`/demo/images/product/${product.image}`} alt={product.image} width="150" className="mt-0 mx-auto mb-5 block shadow-2" />}
+                            <Dialog visible={productDialog} style={{ width: '450px' }} header="New Time Slot" modal className="p-fluid" footer={productDialogFooter} onHide={hideDialog}>
                                 <div className="field">
-                                    <label htmlFor="name">Name</label>
-                                    <InputText
-                                        id="name"
-                                        value={product.name}
-                                        onChange={(e) => onInputChange(e, 'name')}
-                                        required
-                                        autoFocus
-                                        className={classNames({
-                                            'p-invalid': submitted && !product.name
-                                        })}
+                                    <Calendar
+                                        value={datetime12h}
+                                        onChange={(e) => {
+                                            if (e.value instanceof Date) {
+                                                setDateTime12h(e.value);
+                                            }
+                                        }}
+                                        showTime
+                                        inline
+                                        hourFormat="12"
                                     />
-                                    {submitted && !product.name && <small className="p-invalid">Name is required.</small>}
-                                </div>
-                                <div className="field">
-                                    <label htmlFor="description">Description</label>
-                                    <InputTextarea id="description" value={product.description} onChange={(e) => onInputChange(e, 'description')} required rows={3} cols={20} />
-                                </div>
-
-                                <div className="field">
-                                    <label className="mb-3">Category</label>
-                                    <div className="formgrid grid">
-                                        <div className="field-radiobutton col-6">
-                                            <RadioButton inputId="category1" name="category" value="Accessories" onChange={onCategoryChange} checked={product.category === 'Accessories'} />
-                                            <label htmlFor="category1">Accessories</label>
-                                        </div>
-                                        <div className="field-radiobutton col-6">
-                                            <RadioButton inputId="category2" name="category" value="Clothing" onChange={onCategoryChange} checked={product.category === 'Clothing'} />
-                                            <label htmlFor="category2">Clothing</label>
-                                        </div>
-                                        <div className="field-radiobutton col-6">
-                                            <RadioButton inputId="category3" name="category" value="Electronics" onChange={onCategoryChange} checked={product.category === 'Electronics'} />
-                                            <label htmlFor="category3">Electronics</label>
-                                        </div>
-                                        <div className="field-radiobutton col-6">
-                                            <RadioButton inputId="category4" name="category" value="Fitness" onChange={onCategoryChange} checked={product.category === 'Fitness'} />
-                                            <label htmlFor="category4">Fitness</label>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="formgrid grid">
-                                    <div className="field col">
-                                        <label htmlFor="price">Price</label>
-                                        <InputNumber id="price" value={product.price} onValueChange={(e) => onInputNumberChange(e, 'price')} mode="currency" currency="USD" locale="en-US" />
-                                    </div>
-                                    <div className="field col">
-                                        <label htmlFor="quantity">Quantity</label>
-                                        <InputNumber id="quantity" value={product.quantity} onValueChange={(e) => onInputNumberChange(e, 'quantity')} />
-                                    </div>
+                                    {submitted && !product.name && <small className="p-invalid">Time and date is required.</small>}
                                 </div>
                             </Dialog>
 

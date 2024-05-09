@@ -1,0 +1,19 @@
+{
+	"data": [
+		{
+			"id":"1000",
+			"date": "09/13/2022",
+			"startTime": "",
+			"endTime": "",
+			"inventoryStatus": "INSTOCK"
+		},
+		{
+			"id": "1001",
+			"price": 72,
+			"date": "09/12/2022",
+			"startTime": "",
+			"endTime": "",
+			"inventoryStatus": "INSTOCK"
+		}
+	]
+}
