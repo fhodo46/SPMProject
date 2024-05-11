@@ -4,21 +4,36 @@ const { addReference2 } = require("../controllers/referenceController");
 //create new meeting
 const createMeeting = async (req, res) => {
   try {
-    const references = req.body.reference;
+    const {
+      salesAgentId,
+      phoneAgentId,
+      buyerId,
+      startTime,
+      endTime,
+      outcome,
+      type,
+      reference,
+    } = req.body;
     const newMeeting = new Meeting({
-      ...req.body,
+      salesAgentId: salesAgentId,
+      phoneAgentId: phoneAgentId,
+      buyerId: buyerId,
+      startTime: startTime,
+      endTime: endTime,
+      outcome: outcome,
+      type: type,
+      reference: reference,
     });
-    //add all the references to the database
-    if (references.length) {
-      for (const reference of references) {
-        addReference2(reference);
+    if (reference.length) {
+      for (const refrences of reference) {
+        addReference2(refrences);
       }
     }
-    //add meeting to db
     const savedMeeting = await newMeeting.save();
     res.status(201).json(savedMeeting);
   } catch (err) {
-    res.status(400).json({error: "Failed to create meeting"});
+    console.log(err);
+    res.status(400).json({ error: "Failed to create meeting" });
   }
 };
 
@@ -26,7 +41,18 @@ const createMeeting = async (req, res) => {
 const getSalesAgentMeetings = async (req, res) => {
   try {
     const salesAgentId = req.params.salesAgentId;
-    const meetings = await Meeting.find({ salesAgentId });
+    const meetings = await Meeting.find({ salesAgentId: salesAgentId });
+    res.status(200).json(meetings);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
+
+//get all meetings of the logged in sales agent
+const getMySalesAgentMeetings = async (req, res) => {
+  try {
+    const salesAgentId = req.params.salesAgentId;
+    const meetings = await Meeting.find({ salesAgentId: salesAgentId });
     res.status(200).json(meetings);
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -38,27 +64,23 @@ const editMeetingOutcome = async (req, res) => {
   try {
     const meetingId = req.params.meetingId;
     const { outcome } = req.body;
-    const updatedMeeting = await Meeting.findByIdAndUpdate(
-      meetingId,
-      { outcome },
-      { new: true }
-    );
+    const updatedMeeting = await Meeting.findByIdAndUpdate(meetingId, {
+      outcome: outcome,
+    });
     res.status(200).json(updatedMeeting);
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
 };
 
-//change the agent of the meeting
+//change the agent of the meeting  
 const editMeetingAgent = async (req, res) => {
   try {
     const meetingId = req.params.meetingId;
     const { salesAgentId } = req.body;
-    const updatedMeeting = await Meeting.findByIdAndUpdate(
-      meetingId,
-      { salesAgentId },
-      { new: true }
-    );
+    const updatedMeeting = await Meeting.findByIdAndUpdate(meetingId, {
+      salesAgentId: salesAgentId,
+    });
     res.status(200).json(updatedMeeting);
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -70,11 +92,10 @@ const editMeetingTimeSlot = async (req, res) => {
   try {
     const meetingId = req.params.meetingId;
     const { startTime, endTime } = req.body;
-    const updatedMeeting = await Meeting.findByIdAndUpdate(
-      meetingId,
-      { startTime, endTime },
-      { new: true }
-    );
+    const updatedMeeting = await Meeting.findByIdAndUpdate(meetingId, {
+      startTime: startTime,
+      endTime: endTime,
+    });
     res.status(200).json(updatedMeeting);
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -84,7 +105,7 @@ const editMeetingTimeSlot = async (req, res) => {
 //get meetings within a time period
 const getMeetingsByTimePeriod = async (req, res) => {
   try {
-    const { startTime, endTime } = req.query;
+    const { startTime, endTime } = req.body;
     const meetings = await Meeting.find({
       startTime: { $gte: new Date(startTime) },
       endTime: { $lte: new Date(endTime) },
@@ -98,7 +119,7 @@ const getMeetingsByTimePeriod = async (req, res) => {
 //get meetings by outcome
 const getMeetingsByOutcome = async (req, res) => {
   try {
-    const { outcome } = req.query;
+    const { outcome } = req.body;
     const meetings = await Meeting.find({ outcome: outcome });
     res.status(200).json(meetings);
   } catch (err) {

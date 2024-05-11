@@ -83,15 +83,21 @@ const authorize = (req, res, action) => {
   }
 };
 
-const get_id_from_token = (req)=>{
-  const decoded = jwt.verify(req.cookies.tokenCookie.accessToken, process.env.JWT_KEY);
+const get_id_from_token = (req) => {
+  const decoded = jwt.verify(
+    req.cookies.tokenCookie.accessToken,
+    process.env.JWT_KEY
+  );
   return decoded.id;
-}
+};
 
-const get_role_from_token = (req)=>{
-  const decoded = jwt.verify(req.cookies.tokenCookie.accessToken, process.env.JWT_KEY);
+const get_role_from_token = (req) => {
+  const decoded = jwt.verify(
+    req.cookies.tokenCookie.accessToken,
+    process.env.JWT_KEY
+  );
   return decoded.role;
-}
+};
 
 async function createUser(req, res) {
   try {
@@ -159,7 +165,7 @@ async function changePassword(userId, newPassword, oldPassword) {
   const user = await User.findById(userId);
   const response = { result: true, message: "Edited successfully!" };
   if (user) {
-    if (oldPassword === user.password) {
+    if (oldPassword === user.Password) {
       if (newPassword !== oldPassword) {
         User.findOneAndUpdate({ _id: userId }, { newPassword }, (err) => {
           if (err) {
@@ -194,5 +200,5 @@ module.exports = {
   authorize,
   get_username_and_role_from_token,
   get_id_from_token,
-  get_role_from_token
+  get_role_from_token,
 };

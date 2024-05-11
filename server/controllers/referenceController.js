@@ -1,4 +1,6 @@
 const Reference = require("../models/reference");
+const login_controller = require("../controllers/userProxy");
+const { ObjectId } = require("mongodb");
 
 //add reference (backend)
 const addReference2 = async (Reference) => {
@@ -64,11 +66,21 @@ const addReference = async (req, res) => {
   }
 };
 
-//get references for a sales agent
+//get references for a sales agent from chief of operator
 const getSalesAgentReferences = async (req, res) => {
   try {
     const salesAgentId = req.params.salesAgentId;
-    const references = await Reference.find({ salesAgentId });
+    const references = await Reference.find({ salesAgentId: salesAgentId });
+    res.status(200).json(references);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
+
+const getMySalesAgentReferences = async (req, res) => {
+  try {
+    const salesAgentId = login_controller.authorize(req);
+    const references = await Reference.find({ salesAgentId: salesAgentId });
     res.status(200).json(references);
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -116,8 +128,8 @@ const updateReferenceName = async (req, res) => {
     const { firstName, lastName } = req.body;
     const updatedReference = await Reference.findByIdAndUpdate(
       referenceId,
-      { firstName, lastName },
-      { new: true }
+      { firstName: firstName, lastName: lastName },
+      { new: false }
     );
     if (!updatedReference) {
       return res.status(404).json({ error: "Reference not found" });
@@ -135,8 +147,8 @@ const updateReferenceAddress = async (req, res) => {
     const { address } = req.body;
     const updatedReference = await Reference.findByIdAndUpdate(
       referenceId,
-      { address },
-      { new: true }
+      { address: address },
+      { new: false }
     );
     if (!updatedReference) {
       return res.status(404).json({ error: "Reference not found" });
@@ -154,8 +166,8 @@ const updateReferenceProfession = async (req, res) => {
     const { profession } = req.body;
     const updatedReference = await Reference.findByIdAndUpdate(
       referenceId,
-      { profession },
-      { new: true }
+      { profession: profession },
+      { new: false }
     );
     if (!updatedReference) {
       return res.status(404).json({ error: "Reference not found" });
@@ -173,8 +185,8 @@ const updateReferenceSalesAgentId = async (req, res) => {
     const { salesAgentId } = req.body;
     const updatedReference = await Reference.findByIdAndUpdate(
       referenceId,
-      { salesAgentId },
-      { new: true }
+      { salesAgentId: salesAgentId },
+      { new: false }
     );
     if (!updatedReference) {
       return res.status(404).json({ error: "Reference not found" });
@@ -216,7 +228,7 @@ const markReferenceAsQualified = async (req, res) => {
     const updatedReference = await Reference.findByIdAndUpdate(
       referenceId,
       { qualified: true },
-      { new: true }
+      { new: false }
     );
     if (!updatedReference) {
       return res.status(404).json({ error: "Reference not found" });
@@ -234,7 +246,7 @@ const markReferenceAsUnqualified = async (req, res) => {
     const updatedReference = await Reference.findByIdAndUpdate(
       referenceId,
       { qualified: false },
-      { new: true }
+      { new: false }
     );
     if (!updatedReference) {
       return res.status(404).json({ error: "Reference not found" });
@@ -252,7 +264,7 @@ const markReferenceAsCalled = async (req, res) => {
     const updatedReference = await Reference.findByIdAndUpdate(
       referenceId,
       { called: true },
-      { new: true }
+      { new: false }
     );
     if (!updatedReference) {
       return res.status(404).json({ error: "Reference not found" });
@@ -267,11 +279,9 @@ const markReferenceAsCalled = async (req, res) => {
 const markReferenceAsUncalled = async (req, res) => {
   try {
     const referenceId = req.params.referenceId;
-    const updatedReference = await Reference.findByIdAndUpdate(
-      referenceId,
-      { called: false },
-      { new: true }
-    );
+    const updatedReference = await Reference.findByIdAndUpdate(referenceId, {
+      called: false,
+    });
     if (!updatedReference) {
       return res.status(404).json({ error: "Reference not found" });
     }
@@ -285,11 +295,9 @@ const addCommentToReference = async (req, res) => {
   try {
     const referenceId = req.params.referenceId;
     const { body } = req.body;
-    const updatedReference = await Reference.findByIdAndUpdate(
-      referenceId,
-      { $push: { comments: { body, date: new Date() } } },
-      { new: true }
-    );
+    const updatedReference = await Reference.findByIdAndUpdate(referenceId, {
+      $push: { comments: { body: body, date: new Date() } },
+    });
     res.status(200).json(updatedReference);
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -313,4 +321,5 @@ module.exports = {
   markReferenceAsUnqualified,
   addCommentToReference,
   getReferenceById,
+  getMySalesAgentReferences,
 };

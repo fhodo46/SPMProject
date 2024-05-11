@@ -8,6 +8,7 @@ const scheduleSchema = new Schema({
   status: {
     type: String,
     enum: ["free", "scheduled"],
+    default: "free",
   },
 });
 

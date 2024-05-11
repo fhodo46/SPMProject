@@ -3,64 +3,83 @@ const router = express();
 const debtController = require("../controllers/debtController");
 const bodyParser = require("body-parser");
 
-
 router.use(bodyParser.json());
 
 //create a debt
-router.post("/debts", (req, res) => {
+router.post("/create", (req, res) => {
   login_controller.authorize(req, res, () => {
     debtController.createDebt(req, res);
   });
 });
 
 //get a debt by ID
-router.get("/debts/:debtId", debtController.getDebt); // router.get("/debts/:debtId, async (req, res) => {
-//   try {
-//     const debtId = req.params.debtId;
-//     const debt = await Debt.findById(debtId);
-//     if (!debt) {
-//       return res.status(404).json({ error: "Debt not found" });
-//     }
-//     res.status(200).json(debt);
-//   } catch (err) {
-//     res.status(400).json({ error: err.message });
-//   }
-// }")
+router.get("/getById/:debtId", (req, res) => {
+  login_controller.authorize(req, res, () => {
+    debtController.getDebt(req, res);
+  });
+});
 
 //update a debt's payment date
-router.put("/debts/:debtId/paymentDate", debtController.updateDebtPaymentDate);
+router.put("/:debtId/paymentDate", (req, res) => {
+  login_controller.authorize(req, res, () => {
+    debtController.updateDebtPaymentDate(req, res);
+  });
+});
 
 //update a debt's amount
-router.put("/debts/:debtId/amount", debtController.updateDebtAmount);
+router.put("/:debtId/amount", (req, res) => {
+  login_controller.authorize(req, res, () => {
+    debtController.updateDebtAmount(req, res);
+  });
+});
 
 //update a debt's monthly payment
-router.put(
-  "/debts/:debtId/monthlyPayment",
-  debtController.updateDebtMonthlyPayment
-);
+router.put("/:debtId/monthlyPayment", (req, res) => {
+  login_controller.authorize(req, res, () => {
+    debtController.updateDebtMonthlyPayment(req, res);
+  });
+});
 
 //delete a debt
-router.delete("/debts/:debtId", debtController.deleteDebt);
+router.delete("/delete/:debtId", (req, res) => {
+  login_controller.authorize(req, res, () => {
+    debtController.deleteDebt(req, res);
+  });
+});
 
 //get all debts
-router.get("/debts", debtController.getAllDebts);
+router.get("/all", (req, res) => {
+  login_controller.authorize(req, res, () => {
+    debtController.getAllDebts(req, res);
+  });
+});
 
 //get debts by client
-router.get("/debts/client/:clientId", debtController.getDebtsByClient);
+router.get("/client/:clientId", (req, res) => {
+  login_controller.authorize(req, res, () => {
+    debtController.getDebtsByClient(req, res);
+  });
+});
 
 //get debts by phone agent
-router.get(
-  "/debts/phoneAgent/:phoneAgentId",
-  debtController.getDebtsByPhoneAgent
-);
+router.get("/phoneAgent/:phoneAgentId", (req, res) => {
+  login_controller.authorize(req, res, () => {
+    debtController.getDebtsByPhoneAgent(req, res);
+  });
+});
 
 //get debts by sales agent
-router.get(
-  "/debts/salesAgent/:salesAgentId",
-  debtController.getDebtsBySalesAgent
-);
+router.get("/salesAgent/:salesAgentId", (req, res) => {
+  login_controller.authorize(req, res, () => {
+    debtController.getDebtsBySalesAgent(req, res);
+  });
+});
 
 //mark a debt as paid
-router.put("/debts/:debtId/paid", debtController.markDebtAsPaid);
+router.put("/:debtId/paid", (req, res) => {
+  login_controller.authorize(req, res, () => {
+    debtController.markDebtAsPaid(req, res);
+  });
+});
 
 module.exports = router;

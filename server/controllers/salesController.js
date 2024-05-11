@@ -37,7 +37,7 @@ const createSale = async (req, res) => {
 const getSalesAgentSales = async (req, res) => {
   try {
     const salesAgentId = req.params.salesAgentId;
-    const sales = await Sales.find({ salesAgentId });
+    const sales = await Sales.find({ salesAgentId: salesAgentId });
     res.status(200).json(sales);
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -62,7 +62,7 @@ const getSalesAgentSales2 = async (salesAgentId) => {
 const getPhoneAgentSales = async (req, res) => {
   try {
     const phoneAgentId = req.params.phoneAgentId;
-    const sales = await Sales.find({ phoneAgentId });
+    const sales = await Sales.find({ phoneAgentId: phoneAgentId });
     res.status(200).json(sales);
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -73,7 +73,7 @@ const getPhoneAgentSales = async (req, res) => {
 const getBuyerSales = async (req, res) => {
   try {
     const buyerId = req.params.buyerId;
-    const sales = await Sales.find({ buyerId });
+    const sales = await Sales.find({ buyerId: buyerId });
     res.status(200).json(sales);
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -83,8 +83,8 @@ const getBuyerSales = async (req, res) => {
 //get sales by payment type
 const getSalesByPaymentType = async (req, res) => {
   try {
-    const { paymentType } = req.query;
-    const sales = await Sales.find({ paymentType });
+    const { paymentType } = req.body;
+    const sales = await Sales.find({ paymentType: paymentType });
     res.status(200).json(sales);
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -94,7 +94,7 @@ const getSalesByPaymentType = async (req, res) => {
 //get sales by date range
 const getSalesByDateRange = async (req, res) => {
   try {
-    const { startDate, endDate } = req.query;
+    const { startDate, endDate } = req.body;
     const sales = await Sales.find({
       date: { $gte: new Date(startDate), $lte: new Date(endDate) },
     });
@@ -107,11 +107,14 @@ const getSalesByDateRange = async (req, res) => {
 const updateSaleDetails = async (req, res) => {
   try {
     const saleId = req.params.saleId;
-    const { paymentType, upfrontPayment, numOfReferences } = req.body;
+    const { paymentType, upfrontPayment, numOfRefrences } = req.body;
     const updatedSale = await Sales.findByIdAndUpdate(
       saleId,
-      { paymentType, upfrontPayment, numOfReferences },
-      { new: true }
+      {
+        paymentType: paymentType,
+        upfrontPayment: upfrontPayment,
+        numOfRefrences: numOfRefrences,
+      },
     );
     res.status(200).json(updatedSale);
   } catch (err) {

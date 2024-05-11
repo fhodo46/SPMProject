@@ -6,81 +6,122 @@ const bodyParser = require("body-parser");
 router.use(bodyParser.json());
 
 //add a new reference
-router.post("/references", referenceController.addReference);
+router.post("/add", (req, res) => {
+  login_controller.authorize(req, res, () => {
+    referenceController.addReference(req, res);
+  });
+});
 
 //get references for a sales agent
-router.get(
-  "/references/salesAgent/:salesAgentId",
-  referenceController.getSalesAgentReferences
-);
+router.get("/salesAgent/:salesAgentId", (req, res) => {
+  login_controller.authorize(req, res, () => {
+    referenceController.getSalesAgentReferences(req, res);
+  });
+});
+
+//get refrence of the logged in sales agent
+router.get("/myRefrence", (req, res) => {
+  login_controller.authorize(req, res, () => {
+    referenceController.getMySalesAgentReferences(req, res);
+  });
+});
 
 //get qualified references
-router.get("/references/qualified", referenceController.getQualifiedReferences);
+router.get("/qualified", (req, res) => {
+  login_controller.authorize(req, res, () => {
+    referenceController.getQualifiedReferences(req, res);
+  });
+});
 
 //get uncalled references
-router.get("/references/uncalled", referenceController.getUncalledReferences);
+router.get("/uncalled", (req, res) => {
+  login_controller.authorize(req, res, () => {
+    referenceController.getUncalledReferences(req, res);
+  });
+});
 
 //get a reference by ID
-router.get("/references/:referenceId", referenceController.getReferenceById);
+router.get("/get-reference/:referenceId", (req, res) => {
+  login_controller.authorize(req, res, () => {
+    referenceController.getReferenceById(req, res);
+  });
+});
 
 //update a reference's name
-router.put(
-  "/references/:referenceId/name",
-  referenceController.updateReferenceName
-);
+router.put("/updateName/:referenceId", (req, res) => {
+  login_controller.authorize(req, res, () => {
+    referenceController.updateReferenceName(req, res);
+  });
+});
 
 //update a reference's address
-router.put(
-  "/references/:referenceId/address",
-  referenceController.updateReferenceAddress
-);
+router.put("/address/:referenceId", (req, res) => {
+  login_controller.authorize(req, res, () => {
+    referenceController.updateReferenceAddress(req, res);
+  });
+});
 
 //update a reference's profession
-router.put(
-  "/references/:referenceId/profession",
-  referenceController.updateReferenceProfession
-);
+router.put("/profession/:referenceId", (req, res) => {
+  login_controller.authorize(req, res, () => {
+    referenceController.updateReferenceProfession(req, res);
+  });
+});
 
 //update a reference's sales agent ID
-router.put(
-  "/references/:referenceId/salesAgentId",
-  referenceController.updateReferenceSalesAgentId
-);
+router.put("/salesAgentId/:referenceId", (req, res) => {
+  login_controller.authorize(req, res, () => {
+    referenceController.updateReferenceSalesAgentId(req, res);
+  });
+});
 
 //delete a reference
-router.delete("/references/:referenceId", referenceController.deleteReference);
+router.delete("/delete/:referenceId", (req, res) => {
+  login_controller.authorize(req, res, () => {
+    referenceController.deleteReference(req, res);
+  });
+});
 
 //get all references
-router.get("/references", referenceController.getAllReferences);
+router.get("/all", (req, res) => {
+  login_controller.authorize(req, res, () => {
+    referenceController.getAllReferences(req, res);
+  });
+});
 
 //mark a reference as qualified
-router.put(
-  "/references/:referenceId/qualified",
-  referenceController.markReferenceAsQualified
-);
+router.put("/:referenceId/qualified", (req, res) => {
+  login_controller.authorize(req, res, () => {
+    referenceController.markReferenceAsQualified(req, res);
+  });
+});
 
 //mark a reference as unqualified
-router.put(
-  "/references/:referenceId/unqualified",
-  referenceController.markReferenceAsUnqualified
-);
+router.put("/:referenceId/unqualified", (req, res) => {
+  login_controller.authorize(req, res, () => {
+    referenceController.markReferenceAsUnqualified(req, res);
+  });
+});
 
 //mark a reference as called
-router.put(
-  "/references/:referenceId/called",
-  referenceController.markReferenceAsCalled
-);
+router.put("/:referenceId/called", (req, res) => {
+  login_controller.authorize(req, res, () => {
+    referenceController.markReferenceAsCalled(req, res);
+  });
+});
 
 //mark a reference as uncalled
-router.put(
-  "/references/:referenceId/uncalled",
-  referenceController.markReferenceAsUncalled
-);
+router.put("/:referenceId/uncalled", (req, res) => {
+  login_controller.authorize(req, res, () => {
+    referenceController.markReferenceAsUncalled(req, res);
+  });
+});
 
 //add a comment to a reference
-router.put(
-  "/references/:referenceId/comment",
-  referenceController.addCommentToReference
-);
+router.put("/:referenceId/addComment", (req, res) => {
+  login_controller.authorize(req, res, () => {
+    referenceController.addCommentToReference(req, res);
+  });
+});
 
 module.exports = router;
