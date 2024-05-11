@@ -1,12 +1,14 @@
 const Commission = require("../models/commisions");
 const Sales = require("../models/sales");
 const { getSalesAgentSales2 } = require("./salesController");
+const login_controller = require("../controllers/userProxy");
 
 //create a new commission for the sales agent
-const createSalesAgentCommission = async (Sales, res) => {
+const createSalesAgentCommission = async (req, res) => {
   try {
+    const Sales = req.body;
+    const salesAgentId = login_controller.get_id_from_token(req);
     const {
-      salesAgentId,
       phoneAgentId,
       buyerId,
       fullPayment,
@@ -32,10 +34,11 @@ const createSalesAgentCommission = async (Sales, res) => {
     if (upfrontPayment > 0 && numOfReferences >= 10) {
       amount += 5;
     }
+
     //commission for the sales agent
     const newCommission = new Commission({
-      salesAgentId,
-      amount,
+      agentId: salesAgentId,
+      amount: amount,
       approved: false, //set default approval status to false
     });
     const savedCommission = await newCommission.save();
@@ -46,12 +49,13 @@ const createSalesAgentCommission = async (Sales, res) => {
 };
 
 //5 euro comission for travelling fees
-const create5euroCommision = async (salesAgentId, res) => {
+const create5euroCommision = async (req, res) => {
   const amount = 5;
+  const salesAgentId = login_controller.authorize(req);
   try {
     const newCommission = new Commission({
-      salesAgentId,
-      amount,
+      agentId: salesAgentId,
+      amount: amount,
       approved: false, //set default approval status to false
     });
     const savedCommission = await newCommission.save();
@@ -62,11 +66,12 @@ const create5euroCommision = async (salesAgentId, res) => {
 };
 
 //create a new comission for the phone agent
-const createPhoneAgentCommission = async (Sales, res) => {
+const createPhoneAgentCommission = async (req, res) => {
+  const Sales = req.body;
+  const phoneAgentId = login_controller.authorize(req);
   try {
     const {
       salesAgentId,
-      phoneAgentId,
       buyerId,
       fullPayment,
       upfrontPayment,
@@ -83,8 +88,8 @@ const createPhoneAgentCommission = async (Sales, res) => {
     }
     //commission for the phone agent
     const newCommission = new Commission({
-      phoneAgentId,
-      amount,
+      agentId: phoneAgentId,
+      amount: amount,
       approved: false, // Set default approval status to false
     });
     const savedCommission = await newCommission.save();
@@ -95,7 +100,8 @@ const createPhoneAgentCommission = async (Sales, res) => {
 };
 
 //calculate the monthly comission for a sales agent
-const calculateMonthlyComission = async (salesAgentId, res) => {
+const calculateMonthlyComission = async (req, res) => {
+  const salesAgentId = login_controller.authorize(req);
   try {
     const numOfSales = await getSalesAgentSales2(salesAgentId);
     let amount = 0;
@@ -108,7 +114,7 @@ const calculateMonthlyComission = async (salesAgentId, res) => {
     }
 
     const newCommission = new Commission({
-      salesAgentId: salesAgentId,
+      agentId: salesAgentId,
       amount: amount,
       approved: false, // Set default approval status to false
     });
@@ -138,11 +144,9 @@ const updateCommissionAmount = async (req, res) => {
   try {
     const commissionId = req.params.commissionId;
     const { amount } = req.body;
-    const updatedCommission = await Commission.findByIdAndUpdate(
-      commissionId,
-      { amount },
-      { new: true }
-    );
+    const updatedCommission = await Commission.findByIdAndUpdate(commissionId, {
+      amount: amount,
+    });
     if (!updatedCommission) {
       return res.status(404).json({ error: "Commission not found" });
     }
@@ -200,11 +204,9 @@ const getPendingCommissions = async (req, res) => {
 const approveCommission = async (req, res) => {
   try {
     const commissionId = req.params.commissionId;
-    const updatedCommission = await Commission.findByIdAndUpdate(
-      commissionId,
-      { approved: true },
-      { new: true }
-    );
+    const updatedCommission = await Commission.findByIdAndUpdate(commissionId, {
+      approved: true,
+    });
     if (!updatedCommission) {
       return res.status(404).json({ error: "Commission not found" });
     }
@@ -218,11 +220,9 @@ const approveCommission = async (req, res) => {
 const rejectCommission = async (req, res) => {
   try {
     const commissionId = req.params.commissionId;
-    const updatedCommission = await Commission.findByIdAndUpdate(
-      commissionId,
-      { approved: false },
-      { new: true }
-    );
+    const updatedCommission = await Commission.findByIdAndUpdate(commissionId, {
+      approved: false,
+    });
     if (!updatedCommission) {
       return res.status(404).json({ error: "Commission not found" });
     }
@@ -236,7 +236,18 @@ const rejectCommission = async (req, res) => {
 const getCommissionsByAgent = async (req, res) => {
   try {
     const agentId = req.params.agentId;
-    const commissions = await Commission.find({ agentId });
+    const commissions = await Commission.find({ agentId: agentId });
+    res.status(200).json(commissions);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
+
+//get commissions by agent logged in
+const getMyCommissionsByAgent = async (req, res) => {
+  try {
+    const agentId = login_controller.authorize(req);
+    const commissions = await Commission.find({ agentId: agentId });
     res.status(200).json(commissions);
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -257,4 +268,5 @@ module.exports = {
   rejectCommission,
   getCommissionsByAgent,
   calculateMonthlyComission,
+  getMyCommissionsByAgent,
 };

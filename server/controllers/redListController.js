@@ -1,16 +1,17 @@
 const RedListEntry = require("../models/redList");
 const ReservedCall = require("../models/reservedCalls");
+const login_controller = require("../controllers/userProxy");
 
 //create a red list entry
 const createRedListEntry = async (req, res) => {
   try {
-    const { agentId, callId, outcome, renewalDate, referenceId, comments } =
+    const { agentId, callId, outcome, renewaldate, referenceId, comments } =
       req.body;
     const newRedListEntry = new RedListEntry({
       agentId,
       callId,
       outcome,
-      renewalDate,
+      renewaldate,
       referenceId,
       comments,
     });
@@ -42,8 +43,7 @@ const updateRedListOutcome = async (req, res) => {
     const { outcome } = req.body;
     const updatedRedListEntry = await RedListEntry.findByIdAndUpdate(
       redListEntryId,
-      { outcome },
-      { new: true }
+      { outcome: outcome }
     );
     if (!updatedRedListEntry) {
       return res.status(404).json({ error: "Red list entry not found" });
@@ -61,8 +61,7 @@ const updateRedListRenewalDate = async (req, res) => {
     const { renewalDate } = req.body;
     const updatedRedListEntry = await RedListEntry.findByIdAndUpdate(
       redListEntryId,
-      { renewalDate },
-      { new: true }
+      { renewaldate: renewalDate }
     );
     if (!updatedRedListEntry) {
       return res.status(404).json({ error: "Red list entry not found" });
@@ -80,8 +79,7 @@ const updateRedListComment = async (req, res) => {
     const { comments } = req.body;
     const updatedRedListEntry = await RedListEntry.findByIdAndUpdate(
       redListEntryId,
-      { comments },
-      { new: true }
+      { comments: comments }
     );
     if (!updatedRedListEntry) {
       return res.status(404).json({ error: "Red list entry not found" });
@@ -122,7 +120,17 @@ const getAllRedListEntries = async (req, res) => {
 const getRedListEntriesByAgent = async (req, res) => {
   try {
     const agentId = req.params.agentId;
-    const redListEntries = await RedListEntry.find({ agentId });
+    const redListEntries = await RedListEntry.find({ agentId: agentId });
+    res.status(200).json(redListEntries);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
+
+const getMyRedListEntriesByAgent = async (req, res) => {
+  try {
+    const agentId = login_controller.authorize(req);
+    const redListEntries = await RedListEntry.find({ agentId: agentId });
     res.status(200).json(redListEntries);
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -133,7 +141,9 @@ const getRedListEntriesByAgent = async (req, res) => {
 const getRedListEntriesByReference = async (req, res) => {
   try {
     const referenceId = req.params.referenceId;
-    const redListEntries = await RedListEntry.find({ referenceId });
+    const redListEntries = await RedListEntry.find({
+      referenceId: referenceId,
+    });
     res.status(200).json(redListEntries);
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -147,8 +157,7 @@ const addComment = async (req, res) => {
     const { body } = req.body;
     const updatedRedListEntry = await RedListEntry.findByIdAndUpdate(
       redListEntryId,
-      { $push: { comments: { body, date: new Date() } } },
-      { new: true }
+      { $push: { comments: { body: body, date: new Date() } } }
     );
     if (!updatedRedListEntry) {
       return res.status(404).json({ error: "Red list entry not found" });
@@ -208,4 +217,5 @@ module.exports = {
   addComment,
   moveRedListEntryToReservedCalls,
   deleteRedListEntry,
+  getMyRedListEntriesByAgent,
 };

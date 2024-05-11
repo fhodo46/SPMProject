@@ -9,7 +9,7 @@ const referenceSchema = new Schema({
   profession: { type: String, required: true },
   comments: [{ body: String, date: Date }],
   qualified: { type: Boolean, required: true },
-  saledAgentId: { type: Number, required: true },
+  salesAgentId: { type: String, required: true },
   called: { type: Boolean, required: true },
 });
 

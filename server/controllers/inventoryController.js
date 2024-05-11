@@ -1,4 +1,4 @@
-const InventoryItem = require("../models/InventoryItem");
+const { InventoryItem } = require("../models/InventoryItem");
 
 const createInventoryItem = async (req, res) => {
   try {
@@ -16,7 +16,7 @@ const createInventoryItem = async (req, res) => {
 
 const updateQuantity = async (req, res) => {
   try {
-    const { itemId, quantity } = req.query.InventoryItemId;
+    const { itemId, quantity } = req.body;
     const updatedItem = await InventoryItem.findByIdAndUpdate(itemId, {
       quantity: quantity,
     });
@@ -31,7 +31,7 @@ const updateQuantity = async (req, res) => {
 
 const deleteItem = async (req, res) => {
   try {
-    const itemId = req.query.InventoryItemId;
+    const itemId = req.body;
     const deletedItem = await InventoryItem.findByIdAndDelete(itemId);
     if (!deletedItem) {
       return res.status(404).json({ error: "Item not found" });

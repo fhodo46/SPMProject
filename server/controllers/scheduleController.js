@@ -4,13 +4,12 @@ const login_controller = require("../controllers/userProxy");
 //create a new schedule
 const createSchedule = async (req, res) => {
   try {
-    const { startTime, endTime, status } = req.body;
+    const { startTime, endTime } = req.body;
     const salesAgentId = login_controller.get_id_from_token(req);
     const newSchedule = new Schedule({
-      salesAgentId,
-      startTime,
-      endTime,
-      status,
+      salesAgentId: salesAgentId,
+      startTime: startTime,
+      endTime: endTime,
     });
     const savedSchedule = await newSchedule.save();
     res.status(201).json(savedSchedule);
@@ -40,8 +39,8 @@ const updateSchedule = async (req, res) => {
     const { startTime, endTime, status } = req.body;
     const updatedSchedule = await Schedule.findByIdAndUpdate(
       scheduleId,
-      { startTime, endTime, status },
-      { new: true }
+      { startTime: startTime, endTime: endTime, status: status },
+      { new: false }
     );
     if (!updatedSchedule) {
       return res.status(404).json({ error: "Schedule not found" });
@@ -80,7 +79,7 @@ const getAllSchedules = async (req, res) => {
 const getSchedulesBySalesAgent = async (req, res) => {
   try {
     const salesAgentId = login_controller.get_id_from_token(req);
-    const schedules = await Schedule.find({ salesAgentId });
+    const schedules = await Schedule.find({ salesAgentId: salesAgentId });
     res.status(200).json(schedules);
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -91,11 +90,9 @@ const getSchedulesBySalesAgent = async (req, res) => {
 const markScheduleAsHadMeeting = async (req, res) => {
   try {
     const scheduleId = req.params.scheduleId;
-    const updatedSchedule = await Schedule.findByIdAndUpdate(
-      scheduleId,
-      { status: "scheduled" },
-      { new: true }
-    );
+    const updatedSchedule = await Schedule.findByIdAndUpdate(scheduleId, {
+      status: "scheduled",
+    });
     if (!updatedSchedule) {
       return res.status(404).json({ error: "Schedule not found" });
     }
@@ -109,11 +106,9 @@ const markScheduleAsHadMeeting = async (req, res) => {
 const markScheduleAsNoMeeting = async (req, res) => {
   try {
     const scheduleId = req.params.scheduleId;
-    const updatedSchedule = await Schedule.findByIdAndUpdate(
-      scheduleId,
-      { status: "free" },
-      { new: true }
-    );
+    const updatedSchedule = await Schedule.findByIdAndUpdate(scheduleId, {
+      status: "free",
+    });
     if (!updatedSchedule) {
       return res.status(404).json({ error: "Schedule not found" });
     }
