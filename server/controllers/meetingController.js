@@ -41,7 +41,9 @@ const createMeeting = async (req, res) => {
 const getSalesAgentMeetings = async (req, res) => {
   try {
     const salesAgentId = req.params.salesAgentId;
-    const meetings = await Meeting.find({ salesAgentId: salesAgentId });
+    const meetings = await Meeting.find({
+      salesAgentId: salesAgentId,
+    }).populate("buyerId");
     res.status(200).json(meetings);
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -52,7 +54,9 @@ const getSalesAgentMeetings = async (req, res) => {
 const getMySalesAgentMeetings = async (req, res) => {
   try {
     const salesAgentId = req.params.salesAgentId;
-    const meetings = await Meeting.find({ salesAgentId: salesAgentId });
+    const meetings = await Meeting.find({
+      salesAgentId: salesAgentId,
+    }).populate("buyerId");
     res.status(200).json(meetings);
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -73,7 +77,7 @@ const editMeetingOutcome = async (req, res) => {
   }
 };
 
-//change the agent of the meeting  
+//change the agent of the meeting
 const editMeetingAgent = async (req, res) => {
   try {
     const meetingId = req.params.meetingId;
@@ -109,7 +113,7 @@ const getMeetingsByTimePeriod = async (req, res) => {
     const meetings = await Meeting.find({
       startTime: { $gte: new Date(startTime) },
       endTime: { $lte: new Date(endTime) },
-    });
+    }).populate("buyerId");
     res.status(200).json(meetings);
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -120,7 +124,9 @@ const getMeetingsByTimePeriod = async (req, res) => {
 const getMeetingsByOutcome = async (req, res) => {
   try {
     const { outcome } = req.body;
-    const meetings = await Meeting.find({ outcome: outcome });
+    const meetings = await Meeting.find({ outcome: outcome }).populate(
+      "buyerId"
+    );
     res.status(200).json(meetings);
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -135,4 +141,5 @@ module.exports = {
   editMeetingTimeSlot,
   getMeetingsByTimePeriod,
   getMeetingsByOutcome,
+  getMySalesAgentMeetings,
 };

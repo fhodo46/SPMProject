@@ -7,15 +7,15 @@ const cors = require("cors");
 const { connectToDb } = require("./database/db");
 const logInRouter = require("../server/routers/loginRouter");
 const signUpRouter = require("../server/routers/signUpRouter");
-const commissionRouter = require ("../server/routers/commissionRouter");
-const debtRouter = require ("../server/routers/debtRouter");
-const inventoryRouter = require ("../server/routers/inventoryRouter");
-const meetingRouter = require ("../server/routers/meetingRouter");
-const redListRouter = require ("../server/routers/redListRouter");
-const referenceRouter = require ("../server/routers/referenceRouter");
-const reservedCallRouter = require ("../server/routers/reservedCallRouter");
-const salesRouter = require ("../server/routers/salesRouter");
-const scheduleRouter = require ("../server/routers/scheduleRouter");
+const commissionRouter = require("../server/routers/commissionRouter");
+const debtRouter = require("../server/routers/debtRouter");
+const inventoryRouter = require("../server/routers/inventoryRouter");
+const meetingRouter = require("../server/routers/meetingRouter");
+const redListRouter = require("../server/routers/redListRouter");
+const referenceRouter = require("../server/routers/referenceRouter");
+const reservedCallRouter = require("../server/routers/reservedCallRouter");
+const salesRouter = require("../server/routers/salesRouter");
+const scheduleRouter = require("../server/routers/scheduleRouter");
 const authorization = require("../server/routers/authorization");
 const allowedOrigins = ["https://localhost:3000", "postman://app"];
 
@@ -55,7 +55,7 @@ const options = {
 const port = 5443;
 const server = https.createServer(options, app);
 
-connectToDb((err) => {
+connectToDb(async (err) => {
   if (err) {
     console.log("Sth went wrong with the server");
   } else {
