@@ -6,18 +6,24 @@ const bodyParser = require("body-parser");
 router.use(bodyParser.json());
 
 //create a new meeting
-router.post("/create", //(req, res) => {
-  //login_controller.authorize(req, res, () => {
-    meetingController.createMeeting//(req, res);
-  //}
-);
-//});
+router.post("/create", (req, res) => {
+  login_controller.authorize(req, res, () => {
+    meetingController.createMeeting(req, res);
+  });
+});
 
 //get all meetings of a sales agent
-router.get(
-  "/salesAgent/:salesAgentId",
-  meetingController.getSalesAgentMeetings
-);
+router.get("/salesAgent/:salesAgentId", (req, res) => {
+  login_controller.authorize(req, res, () => {
+    meetingController.getSalesAgentMeetings(req, res);
+  });
+});
+
+router.get("/loggedInSalesAgent/:salesAgentId", (req, res) => {
+  login_controller.authorize(req, res, () => {
+    meetingController.getMySalesAgentMeetings(req, res);
+  });
+});
 
 //change the outcome of a meeting
 router.put("/:meetingId/outcome", (req, res) => {
